@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "975747675605",
+    "project_id": "business-management-3d18f",
+    "storage_bucket": "business-management-3d18f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975747675605:android:0055cd9439ca718914395c",
+        "android_client_info": {
+          "package_name": "com.example.gas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9Ts2OQxW16eVRUc6Las5lz9-pCcGwOzw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
