@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/features/vehicle/data/models/vehicle_model.dart';
 import 'package:gas/features/vehicle/presentation/widgets/vehicle_main_widgets.dart';
 
@@ -44,19 +43,13 @@ class VehicleMainPage extends StatelessWidget {
                   VehicleMainPageTile(
                     onTap: () {},
                     vehicle: vehicle,
-                    driving: false,
+                    driving: index != 0,
                     lastPosition: 'Barari, Bhagalpur, Bihar',
                     lastFueled: '50L on 25 Dec, 2024',
                     lastRepaired: 'Brake Change on 11 Jun, 2003',
                     lastDriver: 'Arvind',
                   ),
-                  if (index != 5 - 1) ...[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25.w),
-                      child: Divider(
-                          height: 1, color: Colors.black12.withOpacity(.1)),
-                    ),
-                  ],
+                 
                 ],
               );
             },

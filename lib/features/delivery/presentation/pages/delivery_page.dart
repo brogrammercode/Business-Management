@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/features/consumer/data/models/consumer_model.dart';
 import 'package:gas/features/delivery/data/models/delivery_model.dart';
 import 'package:gas/features/delivery/presentation/widgets/delivery_main_widgets.dart';
@@ -102,25 +101,13 @@ class DeliveryPage extends StatelessWidget {
                 registeredBy: "registeredBy",
                 deactivate: false,
               );
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  DeliveryMainPageTile(
-                    onTap: () {},
-                    delivery: delivery,
-                    consumer: consumer,
-                    delivered: false,
-                    vehicle: vehicle,
-                    employee: employee,
-                  ),
-                  if (index != 5 - 1) ...[
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25.w),
-                      child: Divider(
-                          height: 1, color: Colors.black12.withOpacity(.1)),
-                    ),
-                  ],
-                ],
+              return DeliveryMainPageTile(
+                onTap: () {},
+                delivery: delivery,
+                consumer: consumer,
+                delivered: index != 0,
+                vehicle: vehicle,
+                employee: employee,
               );
             },
           ),
