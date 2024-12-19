@@ -2,6 +2,7 @@ import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gas/features/organisation/presentation/pages/organisation_main.dart';
 import 'package:gas/features/vehicle/presentation/pages/vehicle_main_page.dart';
 import 'package:gas/features/delivery/presentation/pages/delivery_page.dart';
 import 'package:gas/features/home/presentation/widgets/home_widget.dart';
@@ -74,6 +75,19 @@ class _HomePageState extends State<HomePage> {
   List _bottomNavItem() {
     return [
       {
+        "icon": Iconsax.shop,
+        "activeIcon": Iconsax.shop,
+        "label": "My Organisation",
+        "page": const OrganisationMain(),
+        "floatingIcon": Iconsax.shop_add,
+        "floatingOnPressed": () =>
+            Navigator.pushNamed(context, AppRoutes.addUser),
+        "showFloating": false,
+        "actionIcon": Iconsax.search_normal_1,
+        "actionOnPressed": () {},
+        "onPressed": () => setState(() => _activeItem = 0)
+      },
+      {
         "icon": Iconsax.user_add,
         "activeIcon": Iconsax.user_add,
         "label": "Consumer Panel",
@@ -84,7 +98,7 @@ class _HomePageState extends State<HomePage> {
         "showFloating": true,
         "actionIcon": Iconsax.search_normal_1,
         "actionOnPressed": () {},
-        "onPressed": () => setState(() => _activeItem = 0)
+        "onPressed": () => setState(() => _activeItem = 1)
       },
       {
         "icon": Iconsax.truck,
@@ -96,7 +110,7 @@ class _HomePageState extends State<HomePage> {
         "showFloating": true,
         "actionIcon": null,
         "actionOnPressed": () {},
-        "onPressed": () => setState(() => _activeItem = 1)
+        "onPressed": () => setState(() => _activeItem = 2)
       },
       {
         "icon": Iconsax.box,
@@ -108,7 +122,7 @@ class _HomePageState extends State<HomePage> {
         "showFloating": true,
         "actionIcon": Iconsax.search_normal_1,
         "actionOnPressed": () {},
-        "onPressed": () => setState(() => _activeItem = 2)
+        "onPressed": () => setState(() => _activeItem = 3)
       },
       {
         "icon": Iconsax.user_octagon,
@@ -120,7 +134,7 @@ class _HomePageState extends State<HomePage> {
         "showFloating": false,
         "actionIcon": null,
         "actionOnPressed": () {},
-        "onPressed": () => setState(() => _activeItem = 3)
+        "onPressed": () => setState(() => _activeItem = 4)
       },
     ];
   }
