@@ -13,30 +13,31 @@ class ConsumerRepoImpl implements ConsumerRepo {
       : _consumerDataSource = consumerDataSource;
 
   @override
-  Future<Either<Failure, void>> addConsumer(
+  Future<Either<CommonError, void>> addConsumer(
       {required ConsumerModel consumer, required File? profileImage}) async {
     try {
       await _consumerDataSource.addConsumer(
           consumer: consumer, profileImage: profileImage);
       return const Right(null);
     } on Exception catch (e) {
-      return Left(Failure(code: 'ADD_CONSUMER_ERROR', message: e.toString()));
+      return Left(
+          CommonError(code: 'ADD_CONSUMER_ERROR', message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, List<ConsumerModel>>> getAllConsumers() async {
+  Future<Either<CommonError, List<ConsumerModel>>> getAllConsumers() async {
     try {
       final consumers = await _consumerDataSource.getAllConsumers();
       return Right(consumers); // Return the list of consumers on success
     } on Exception catch (e) {
       return Left(
-          Failure(code: 'GET_ALL_CONSUMERS_ERROR', message: e.toString()));
+          CommonError(code: 'GET_ALL_CONSUMERS_ERROR', message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, void>> updateConsumer(
+  Future<Either<CommonError, void>> updateConsumer(
       {required ConsumerModel consumer, required File? profileImage}) async {
     try {
       await _consumerDataSource.updateConsumer(
@@ -44,18 +45,18 @@ class ConsumerRepoImpl implements ConsumerRepo {
       return const Right(null);
     } on Exception catch (e) {
       return Left(
-          Failure(code: 'UPDATE_CONSUMER_ERROR', message: e.toString()));
+          CommonError(code: 'UPDATE_CONSUMER_ERROR', message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, void>> deleteConsumer({required String id}) async {
+  Future<Either<CommonError, void>> deleteConsumer({required String id}) async {
     try {
       await _consumerDataSource.deleteConsumer(id: id);
       return const Right(null);
     } on Exception catch (e) {
       return Left(
-          Failure(code: 'DELETE_CONSUMER_ERROR', message: e.toString()));
+          CommonError(code: 'DELETE_CONSUMER_ERROR', message: e.toString()));
     }
   }
 }

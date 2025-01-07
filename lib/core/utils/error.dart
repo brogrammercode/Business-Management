@@ -1,6 +1,14 @@
-class Failure {
-  final String code;
+class CommonError {
   final String message;
+  final String code;
+  final String consoleMessage;
 
-  Failure({required this.code, this.message = "An unexpected error occurred"});
+  const CommonError(
+      {this.message = "Something went wrong, Please try again later",
+      this.code = "",
+      this.consoleMessage = ""});
+
+  factory CommonError.initial() => const CommonError();
 }
+
+enum StateStatus { initial, loading, failure, success }

@@ -8,7 +8,7 @@ class DeleteConsumer implements UseCase<void, DeleteConsumerParams> {
 
   DeleteConsumer({required ConsumerRepo repo}) : _repo = repo;
   @override
-  Future<Either<Failure, void>> call(DeleteConsumerParams params) async {
+  Future<Either<CommonError, void>> call(DeleteConsumerParams params) async {
     return await _repo.deleteConsumer(id: params.id);
   }
 }

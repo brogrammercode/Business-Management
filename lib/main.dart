@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/config/theme/themes.dart';
 import 'package:gas/core/injections/container.dart';
+import 'package:gas/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:gas/features/consumer/presentation/bloc/consumer_bloc.dart';
+import 'package:gas/features/organisation/presentation/cubit/org_cubit.dart';
 import 'package:gas/firebase_options.dart';
 
 void main() async {
@@ -22,6 +24,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthCubit>(create: (_) => Injections.get<AuthCubit>()),
+        BlocProvider<OrgCubit>(create: (_) => Injections.get<OrgCubit>()),
         BlocProvider<ConsumerBloc>(
             create: (_) => Injections.get<ConsumerBloc>()),
       ],

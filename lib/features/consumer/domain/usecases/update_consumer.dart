@@ -11,7 +11,7 @@ class UpdateConsumer implements UseCase<void, UpdateConsumerParams> {
 
   UpdateConsumer({required ConsumerRepo repo}) : _repo = repo;
   @override
-  Future<Either<Failure, void>> call(UpdateConsumerParams params) async {
+  Future<Either<CommonError, void>> call(UpdateConsumerParams params) async {
     return await _repo.updateConsumer(
         consumer: params.consumer, profileImage: params.profileImage);
   }

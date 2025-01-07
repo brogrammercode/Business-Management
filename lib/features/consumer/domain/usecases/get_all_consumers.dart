@@ -9,7 +9,7 @@ class GetAllConsumers implements UseCase<List<ConsumerModel>, NoParams> {
 
   GetAllConsumers({required ConsumerRepo repo}) : _repo = repo;
   @override
-  Future<Either<Failure, List<ConsumerModel>>> call(NoParams params) async {
+  Future<Either<CommonError, List<ConsumerModel>>> call(NoParams params) async {
     return await _repo.getAllConsumers();
   }
 }

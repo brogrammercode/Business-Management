@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:gas/core/utils/location.dart';
 
 class Employee extends Equatable {
   final String id;
@@ -7,7 +8,7 @@ class Employee extends Equatable {
   final String name;
   final String avatar;
   final String bio;
-  final String address;
+  final UserLocationModel address;
   final Timestamp dob;
   final String aadharNo;
   final String phoneNo;

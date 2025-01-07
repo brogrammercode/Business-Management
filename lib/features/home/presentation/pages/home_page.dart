@@ -81,8 +81,8 @@ class _HomePageState extends State<HomePage> {
         "page": const OrganisationMain(),
         "floatingIcon": Iconsax.shop_add,
         "floatingOnPressed": () =>
-            Navigator.pushNamed(context, AppRoutes.addUser),
-        "showFloating": false,
+            Navigator.pushNamed(context, AppRoutes.addOrg),
+        "showFloating": true,
         "actionIcon": Iconsax.search_normal_1,
         "actionOnPressed": () {},
         "onPressed": () => setState(() => _activeItem = 0)

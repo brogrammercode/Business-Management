@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:iconsax/iconsax.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -87,21 +89,31 @@ class ProfilePage extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Iconsax.unlock),
-                    SizedBox(width: 20.w),
-                    const Text("Log out",
-                        style: TextStyle(fontWeight: FontWeight.bold))
-                  ],
-                ),
-                const Icon(Iconsax.arrow_right_3)
-              ],
+          InkWell(
+            onTap: () async {
+              try {
+                await FirebaseAuth.instance.signOut();
+                await GoogleSignIn().signOut();
+              } catch (e) {
+                throw Exception("Couldn't log out: $e");
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Iconsax.unlock),
+                      SizedBox(width: 20.w),
+                      const Text("Log out",
+                          style: TextStyle(fontWeight: FontWeight.bold))
+                    ],
+                  ),
+                  const Icon(Iconsax.arrow_right_3)
+                ],
+              ),
             ),
           ),
         ],

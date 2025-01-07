@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gas/core/config/theme/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -12,11 +13,15 @@ class AppThemes {
     scaffoldBackgroundColor: Colors.white,
     textTheme: GoogleFonts.montserratTextTheme().copyWith(),
     buttonTheme: const ButtonThemeData(
-      buttonColor: AppColors.blue500,
-      textTheme: ButtonTextTheme.primary,
-    ),
+        buttonColor: AppColors.blue500, textTheme: ButtonTextTheme.primary),
     appBarTheme: const AppBarTheme(
+      surfaceTintColor: Colors.white,
       iconTheme: IconThemeData(color: Colors.black),
+      systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          systemNavigationBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarIconBrightness: Brightness.dark),
     ),
     colorScheme: const ColorScheme.light(
       primary: AppColors.blue500,
@@ -60,8 +65,14 @@ class AppThemes {
     textTheme: GoogleFonts.montserratTextTheme().copyWith(),
     buttonTheme: const ButtonThemeData(
         buttonColor: AppColors.blue500, textTheme: ButtonTextTheme.primary),
-    appBarTheme:
-        const AppBarTheme(iconTheme: IconThemeData(color: Colors.white)),
+    appBarTheme: const AppBarTheme(
+        surfaceTintColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.white),
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            systemNavigationBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
+            systemNavigationBarIconBrightness: Brightness.dark)),
     colorScheme: const ColorScheme.dark(
       primary: AppColors.blue500,
       secondary: AppColors.yellow600,

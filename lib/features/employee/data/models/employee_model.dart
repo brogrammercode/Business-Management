@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/employee/domain/entities/employee.dart';
 
 class EmployeeModel extends Employee {
@@ -29,7 +30,7 @@ class EmployeeModel extends Employee {
     String? name,
     String? avatar,
     String? bio,
-    String? address,
+    UserLocationModel? address,
     Timestamp? dob,
     String? aadharNo,
     String? phoneNo,
@@ -71,7 +72,7 @@ class EmployeeModel extends Employee {
       'name': name,
       'avatar': avatar,
       'bio': bio,
-      'address': address,
+      'address': address.toJson(),
       'dob': dob,
       'aadharNo': aadharNo,
       'phoneNo': phoneNo,
@@ -94,7 +95,7 @@ class EmployeeModel extends Employee {
       name: json['name'] ?? "",
       avatar: json['avatar'] ?? "",
       bio: json['bio'] ?? "",
-      address: json['address'] ?? "",
+      address: UserLocationModel.fromJson(json['address'] ?? {}),
       dob: json['dob'] ?? Timestamp.now(),
       aadharNo: json['aadharNo'] ?? "",
       phoneNo: json['phoneNo'] ?? "",

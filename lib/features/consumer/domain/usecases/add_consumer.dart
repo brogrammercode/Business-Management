@@ -11,7 +11,7 @@ class AddConsumer implements UseCase<void, AddConsumerParams> {
 
   AddConsumer({required ConsumerRepo repo}) : _repo = repo;
   @override
-  Future<Either<Failure, void>> call(AddConsumerParams params) async {
+  Future<Either<CommonError, void>> call(AddConsumerParams params) async {
     return await _repo.addConsumer(
         consumer: params.consumer, profileImage: params.profileImage);
   }

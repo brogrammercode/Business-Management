@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/consumer/data/models/consumer_model.dart';
 import 'package:gas/features/delivery/data/models/delivery_model.dart';
 import 'package:gas/features/delivery/presentation/widgets/delivery_main_widgets.dart';
@@ -88,7 +89,7 @@ class DeliveryPage extends StatelessWidget {
                 name: "Afaik",
                 avatar: "avatar",
                 bio: "bio",
-                address: "address",
+                address: UserLocationModel.fromJson({}),
                 dob: Timestamp.now(),
                 aadharNo: "aadharNo",
                 phoneNo: "phoneNo",

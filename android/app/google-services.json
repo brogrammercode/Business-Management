@@ -12,7 +12,20 @@
           "package_name": "com.example.gas"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "975747675605-jklqvisagba28te8eknssnbcgl2j5jrs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gas",
+            "certificate_hash": "cc876628def9bf4206e11697751a1051f5330520"
+          }
+        },
+        {
+          "client_id": "975747675605-ub59hsiki1jhji74n22man06jdnvc6oo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD9Ts2OQxW16eVRUc6Las5lz9-pCcGwOzw"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975747675605-ub59hsiki1jhji74n22man06jdnvc6oo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "975747675605-j390uqf3v3vnc4mruf37pa3ie46fl9e6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.gas"
+              }
+            }
+          ]
         }
       }
     }
