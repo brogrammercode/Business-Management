@@ -41,7 +41,7 @@ class AppThemes {
             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(100))),
             iconColor: const WidgetStatePropertyAll(Colors.white),
-            fixedSize: const WidgetStatePropertyAll(Size(330, 55)),
+            // fixedSize: const WidgetStatePropertyAll(Size(330, 55)),
             textStyle:
                 const WidgetStatePropertyAll(TextStyle(color: Colors.white)),
             backgroundColor: const WidgetStatePropertyAll(AppColors.blue500),

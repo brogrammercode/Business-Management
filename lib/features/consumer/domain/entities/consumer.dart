@@ -19,7 +19,7 @@ class Consumer extends Equatable {
   final String bankAccountNo;
   final num paid;
   final num due;
-  final String orgID;
+  final String businessID;
   final Timestamp registrationTD;
   final String registeredBy;
   final bool deactivate;
@@ -42,7 +42,7 @@ class Consumer extends Equatable {
     required this.bankAccountNo,
     required this.paid,
     required this.due,
-    required this.orgID,
+    required this.businessID,
     required this.registrationTD,
     required this.registeredBy,
     required this.deactivate,
@@ -67,7 +67,7 @@ class Consumer extends Equatable {
         bankAccountNo,
         paid,
         due,
-        orgID,
+        businessID,
         registrationTD,
         registeredBy,
         deactivate,

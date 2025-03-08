@@ -36,7 +36,7 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TransparentAppBar(),
+      appBar: AppBar(),
       floatingActionButton: CommonFloatingActionButton(
           onPressed: _addConsumer, icon: Icons.check),
       body: BlocConsumer<ConsumerBloc, ConsumerState>(
@@ -89,7 +89,7 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 25.w, vertical: 20.h),
-                    child: ProfileImagePicker(
+                    child: CommonImagePicker(
                       profileImage: profileImage,
                       onImageSelected: (File selectedImage) {
                         setState(() {
@@ -132,7 +132,6 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                       controller: _genderController,
                       labelText: 'Gender',
                       keyboardType: TextInputType.text,
-                      readOnly: true,
                       onTap: () {
                         _showGenderPickerDialog();
                       },
@@ -280,7 +279,7 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
         registeredBy: "Anonymous",
         deactivate: false,
         dob: Timestamp.now(),
-        orgID: '',
+        businessID: '',
         addressGeoPoint: const GeoPoint(0, 0),
       );
 

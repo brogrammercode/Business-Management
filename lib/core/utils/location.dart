@@ -9,28 +9,41 @@ class UserLocationEntity {
   final String country;
   final String continent;
   final GeoPoint geopoint;
+  final Timestamp updateTD;
 
-  UserLocationEntity(
-      {required this.city,
-      required this.area,
-      required this.pincode,
-      required this.locality,
-      required this.state,
-      required this.country,
-      required this.continent,
-      required this.geopoint});
+  UserLocationEntity({
+    String? city,
+    String? area,
+    String? pincode,
+    String? locality,
+    String? state,
+    String? country,
+    String? continent,
+    GeoPoint? geopoint,
+    Timestamp? updateTD,
+  })  : city = city ?? "",
+        area = area ?? "",
+        pincode = pincode ?? "",
+        locality = locality ?? "",
+        state = state ?? "",
+        country = country ?? "",
+        continent = continent ?? "",
+        geopoint = geopoint ?? const GeoPoint(0, 0),
+        updateTD = updateTD ?? Timestamp.now();
+
 }
 
 class UserLocationModel extends UserLocationEntity {
   UserLocationModel({
-    super.city = "",
-    super.area = "",
-    super.pincode = "",
-    super.locality = "",
-    super.state = "",
-    super.country = "",
-    super.continent = "",
-    super.geopoint = const GeoPoint(0, 0),
+    super.city,
+    super.area,
+    super.pincode,
+    super.locality,
+    super.state,
+    super.country,
+    super.continent,
+    super.geopoint,
+    super.updateTD,
   });
 
   factory UserLocationModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +56,7 @@ class UserLocationModel extends UserLocationEntity {
       country: json['country'] ?? '',
       continent: json['continent'] ?? '',
       geopoint: json['geopoint'] ?? const GeoPoint(0, 0),
+      updateTD: json['updateTD'] ?? Timestamp.now(),
     );
   }
 
@@ -56,12 +70,13 @@ class UserLocationModel extends UserLocationEntity {
       'country': country,
       'continent': continent,
       'geopoint': geopoint,
+      'updateTD': updateTD,
     };
   }
 
   @override
   String toString() {
-    return 'UserLocationModel(city: $city, area: $area, pincode: $pincode, locality: $locality, state: $state, country: $country, continent: $continent, geopoint: $geopoint)';
+    return 'UserLocationModel(city: $city, area: $area, pincode: $pincode, locality: $locality, state: $state, country: $country, continent: $continent, geopoint: $geopoint, updateTD: $updateTD)';
   }
 
   UserLocationModel copyWith({
@@ -73,6 +88,7 @@ class UserLocationModel extends UserLocationEntity {
     String? country,
     String? continent,
     GeoPoint? geopoint,
+    Timestamp? updateTD,
   }) {
     return UserLocationModel(
       city: city ?? this.city,
@@ -83,6 +99,7 @@ class UserLocationModel extends UserLocationEntity {
       country: country ?? this.country,
       continent: continent ?? this.continent,
       geopoint: geopoint ?? this.geopoint,
+      updateTD: updateTD ?? this.updateTD,
     );
   }
 }

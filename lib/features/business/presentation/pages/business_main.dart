@@ -2,39 +2,40 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gas/features/organisation/presentation/cubit/org_cubit.dart';
+import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:intl/intl.dart';
 
-class OrganisationMain extends StatefulWidget {
-  const OrganisationMain({super.key});
+class BusinessMain extends StatefulWidget {
+  const BusinessMain({super.key});
 
   @override
-  State<OrganisationMain> createState() => _OrganisationMainState();
+  State<BusinessMain> createState() => _BusinessMainState();
 }
 
-class _OrganisationMainState extends State<OrganisationMain> {
-  final List<String> participants = [
-    "https://cdn.dribbble.com/userupload/16403798/file/original-ea1aa8f7d719cfc74ae33e3efc268cf7.png?resize=1600x1200&vertical=center",
-    "https://cdn.dribbble.com/userupload/16403037/file/original-a19ea3eab583b6f672ecae9bfa789114.png?resize=1600x1200&vertical=center",
-    "https://cdn.dribbble.com/userupload/16265134/file/original-0ecc04ffbfed43852753ced92d01cfb7.png?resize=1600x1200&vertical=center",
-    "https://cdn.dribbble.com/userupload/16265349/file/original-04d33c2b6918da4a4fd5b4ff57145aef.png?resize=1600x1200&vertical=center"
-  ];
-
+class _BusinessMainState extends State<BusinessMain> {
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrgCubit, OrgState>(
+    return BlocConsumer<BusinessCubit, BusinessState>(
       listener: (context, state) {},
       builder: (context, state) {
-        final orgs = state.orgs;
+        final businesses = state.businesses;
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListView.builder(
-                  itemCount: orgs.length,
+                  itemCount: businesses.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
+                    final business = businesses[index];
+                    final participants = [
+                      ...business.owners,
+                      ...business.admins,
+                      ...business.employees,
+                      ...business.requests
+                    ];
                     return InkWell(
-                      onTap: _onOrgtap,
+                      onTap: () => _onOrgtap(businessID: business.business.id),
                       child: Container(
                         decoration: BoxDecoration(
                           border:
@@ -48,14 +49,23 @@ class _OrganisationMainState extends State<OrganisationMain> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildHeader(),
+                            _buildHeader(
+                                imageUrl: business.business.avatar,
+                                title: business.business.name,
+                                subtitle: business.owners.isEmpty
+                                    ? "Owner"
+                                    : business.owners.first.name),
                             SizedBox(height: 20.h),
                             _buildSectionTitle(context, "Created On"),
-                            const Text("25 Dec, 2024"),
+                            Text(DateFormat("dd MMM, yyyy")
+                                .format(business.business.creationTD.toDate())),
                             SizedBox(height: 20.h),
                             _buildSectionTitle(context, "Participants"),
                             SizedBox(height: 10.h),
-                            _buildParticipantsRow(),
+                            _buildParticipantsRow(
+                                images:
+                                    participants.map((e) => e.avatar).toList(),
+                                context: context),
                           ],
                         ),
                       ),
@@ -68,27 +78,25 @@ class _OrganisationMainState extends State<OrganisationMain> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(
+      {required String imageUrl,
+      required String title,
+      required String subtitle}) {
     return Row(
       children: [
         ClipOval(
           child: CachedNetworkImage(
-            height: 50.h,
-            width: 50.h,
-            fit: BoxFit.cover,
-            imageUrl:
-                "https://cdn.dribbble.com/userupload/16404014/file/original-7cd57b8c3c4041eacb8dc3883d467fef.png?resize=1200x900&vertical=center",
-          ),
+              height: 50.h, width: 50.h, fit: BoxFit.cover, imageUrl: imageUrl),
         ),
         SizedBox(width: 10.w),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Sonu's Org",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text("Sonu Kumar"),
+            Text(subtitle),
           ],
         ),
       ],
@@ -105,7 +113,8 @@ class _OrganisationMainState extends State<OrganisationMain> {
     );
   }
 
-  Widget _buildParticipantsRow() {
+  Widget _buildParticipantsRow(
+      {required List<String> images, required BuildContext context}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -113,22 +122,26 @@ class _OrganisationMainState extends State<OrganisationMain> {
           child: SizedBox(
             height: 45.h,
             child: Stack(
-              children: participants.asMap().entries.map((entry) {
+              children: images.asMap().entries.map((entry) {
                 final idx = entry.key;
                 final url = entry.value;
+
+                if (idx > 3) {
+                  return const SizedBox.shrink(); // Hide extra avatars
+                }
+
                 return Positioned(
                   left: idx * 25.w,
-                  child: idx == 3
-                      ? _buildMoreParticipantsIndicator()
-                      : idx > 3
-                          ? const SizedBox.shrink()
-                          : _buildParticipantAvatar(url),
+                  child: idx == 3 && images.length > 4
+                      ? _buildMoreParticipantsIndicator(
+                          context, images.length - 3)
+                      : _buildParticipantAvatar(url),
                 );
               }).toList(),
             ),
           ),
         ),
-        Text('${participants.length} People joined'),
+        Text('${images.length} People joined'),
       ],
     );
   }
@@ -156,7 +169,8 @@ class _OrganisationMainState extends State<OrganisationMain> {
     );
   }
 
-  Widget _buildMoreParticipantsIndicator() {
+  Widget _buildMoreParticipantsIndicator(
+      BuildContext context, int remainingCount) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -178,10 +192,11 @@ class _OrganisationMainState extends State<OrganisationMain> {
           width: 35.h,
           child: Center(
             child: Text(
-              '+${participants.length - 3}',
+              '+$remainingCount',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
+                fontSize:
+                    Theme.of(context).textTheme.bodySmall?.fontSize ?? 12.sp,
               ),
             ),
           ),
@@ -190,7 +205,7 @@ class _OrganisationMainState extends State<OrganisationMain> {
     );
   }
 
-  void _onOrgtap() async {
-    context.read<OrgCubit>().updateOrgID(orgID: "");
+  void _onOrgtap({required String businessID}) async {
+    context.read<BusinessCubit>().updateBusinessID(businessID: businessID);
   }
 }

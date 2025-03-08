@@ -13,7 +13,7 @@ class Vehicle extends Equatable {
   final String vehicleBackURL;
   final String vehicleRCURL;
   final String vehicleInsuranceURL;
-  final String orgID;
+  final String businessID;
   final Timestamp registrationTD;
   final String registeredBy;
   final bool deactivate;
@@ -30,7 +30,7 @@ class Vehicle extends Equatable {
     required this.vehicleBackURL,
     required this.vehicleRCURL,
     required this.vehicleInsuranceURL,
-    required this.orgID,
+    required this.businessID,
     required this.registrationTD,
     required this.registeredBy,
     required this.deactivate,
@@ -49,7 +49,7 @@ class Vehicle extends Equatable {
         vehicleBackURL,
         vehicleRCURL,
         vehicleInsuranceURL,
-        orgID,
+        businessID,
         registrationTD,
         registeredBy,
         deactivate,

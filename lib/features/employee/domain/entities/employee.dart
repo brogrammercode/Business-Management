@@ -16,9 +16,9 @@ class Employee extends Equatable {
   final String upiID;
   final String drivingLicenseURL;
   final String panCardURL;
-  final String orgID;
-  final Timestamp registrationTD;
-  final String registeredBy;
+  final String businessID;
+  final Timestamp creationTD;
+  final String createdBy;
   final bool deactivate;
 
   const Employee({
@@ -35,9 +35,9 @@ class Employee extends Equatable {
     required this.upiID,
     required this.drivingLicenseURL,
     required this.panCardURL,
-    required this.orgID,
-    required this.registrationTD,
-    required this.registeredBy,
+    required this.businessID,
+    required this.creationTD,
+    required this.createdBy,
     required this.deactivate,
   });
 
@@ -56,9 +56,9 @@ class Employee extends Equatable {
         upiID,
         drivingLicenseURL,
         panCardURL,
-        orgID,
-        registrationTD,
-        registeredBy,
+        businessID,
+        creationTD,
+        createdBy,
         deactivate,
       ];
 }

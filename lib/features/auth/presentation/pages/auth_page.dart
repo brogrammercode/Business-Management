@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/utils/assets.dart';
-import 'package:gas/core/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/utils/error.dart';
@@ -30,7 +29,7 @@ class _AuthPageState extends State<AuthPage> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: const TransparentAppBar(),
+          appBar: AppBar(),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

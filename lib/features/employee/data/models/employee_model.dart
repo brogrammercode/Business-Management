@@ -17,9 +17,9 @@ class EmployeeModel extends Employee {
     required super.upiID,
     required super.drivingLicenseURL,
     required super.panCardURL,
-    required super.orgID,
-    required super.registrationTD,
-    required super.registeredBy,
+    required super.businessID,
+    required super.creationTD,
+    required super.createdBy,
     required super.deactivate,
   });
 
@@ -38,9 +38,9 @@ class EmployeeModel extends Employee {
     String? upiID,
     String? drivingLicenseURL,
     String? panCardURL,
-    String? orgID,
-    Timestamp? registrationTD,
-    String? registeredBy,
+    String? businessID,
+    Timestamp? creationTD,
+    String? createdBy,
     bool? deactivate,
   }) {
     return EmployeeModel(
@@ -57,9 +57,9 @@ class EmployeeModel extends Employee {
       upiID: upiID ?? this.upiID,
       drivingLicenseURL: drivingLicenseURL ?? this.drivingLicenseURL,
       panCardURL: panCardURL ?? this.panCardURL,
-      orgID: orgID ?? this.orgID,
-      registrationTD: registrationTD ?? this.registrationTD,
-      registeredBy: registeredBy ?? this.registeredBy,
+      businessID: businessID ?? this.businessID,
+      creationTD: creationTD ?? this.creationTD,
+      createdBy: createdBy ?? this.createdBy,
       deactivate: deactivate ?? this.deactivate,
     );
   }
@@ -80,9 +80,9 @@ class EmployeeModel extends Employee {
       'upiID': upiID,
       'drivingLicenseURL': drivingLicenseURL,
       'panCardURL': panCardURL,
-      'orgID': orgID,
-      'registrationTD': registrationTD,
-      'registeredBy': registeredBy,
+      'businessID': businessID,
+      'creationTD': creationTD,
+      'createdBy': createdBy,
       'deactivate': deactivate,
     };
   }
@@ -103,9 +103,9 @@ class EmployeeModel extends Employee {
       upiID: json['upiID'] ?? "",
       drivingLicenseURL: json['drivingLicenseURL'] ?? "",
       panCardURL: json['panCardURL'] ?? "",
-      orgID: json['orgID'] ?? "",
-      registrationTD: json['registrationTD'] ?? Timestamp.now(),
-      registeredBy: json['registeredBy'] ?? "",
+      businessID: json['businessID'] ?? "",
+      creationTD: json['creationTD'] ?? Timestamp.now(),
+      createdBy: json['createdBy'] ?? "",
       deactivate: json['deactivate'] ?? false,
     );
   }
@@ -128,9 +128,9 @@ EmployeeModel(
   upiID: $upiID,
   drivingLicenseURL: $drivingLicenseURL,
   panCardURL: $panCardURL,
-  orgID: $orgID,
-  registrationTD: $registrationTD,
-  registeredBy: $registeredBy,
+  businessID: $businessID,
+  creationTD: $creationTD,
+  createdBy: $createdBy,
   deactivate: $deactivate,
 )
     ''';

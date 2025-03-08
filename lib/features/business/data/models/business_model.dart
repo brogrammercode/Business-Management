@@ -1,76 +1,76 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gas/core/utils/location.dart';
-import 'package:gas/features/organisation/domain/entities/organisation.dart';
+import 'package:gas/features/business/domain/entities/business.dart';
 
-class OrgModel extends Organization {
-  const OrgModel({
+class BusinessModel extends Business {
+  const BusinessModel({
     required super.id,
     required super.name,
     required super.bio,
     required super.avatar,
-    required super.address,
+    required super.location,
     required super.socialHandles,
     required super.owners,
     required super.admins,
     required super.employees,
     required super.requests,
-    required super.registrationTD,
-    required super.registeredBy,
+    required super.creationTD,
+    required super.createdBy,
     required super.deactivate,
   });
 
-  OrgModel copyWith({
+  BusinessModel copyWith({
     String? id,
     String? name,
     String? bio,
     String? avatar,
-    UserLocationModel? address,
+    UserLocationModel? location,
     List? socialHandles,
     List? owners,
     List? admins,
     List? employees,
     List? requests,
-    Timestamp? registrationTD,
-    String? registeredBy,
+    Timestamp? creationTD,
+    String? createdBy,
     bool? deactivate,
   }) {
-    return OrgModel(
+    return BusinessModel(
       id: id ?? this.id,
       name: name ?? this.name,
       bio: bio ?? this.bio,
       avatar: avatar ?? this.avatar,
-      address: address ?? this.address,
+      location: location ?? this.location,
       socialHandles: socialHandles ?? this.socialHandles,
       owners: owners ?? this.owners,
       admins: admins ?? this.admins,
       employees: employees ?? this.employees,
       requests: requests ?? this.requests,
-      registrationTD: registrationTD ?? this.registrationTD,
-      registeredBy: registeredBy ?? this.registeredBy,
+      creationTD: creationTD ?? this.creationTD,
+      createdBy: createdBy ?? this.createdBy,
       deactivate: deactivate ?? this.deactivate,
     );
   }
 
-  factory OrgModel.fromJson(Map<String, dynamic>? json) {
+  factory BusinessModel.fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       throw ArgumentError('JSON map cannot be null');
     }
 
-    return OrgModel(
+    return BusinessModel(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       bio: json['bio'] ?? '',
       avatar: json['avatar'] ?? '',
-      address: UserLocationModel.fromJson(json['address'] ?? {}),
+      location: UserLocationModel.fromJson(json['location'] ?? {}),
       socialHandles: List.from(json['socialHandles'] ?? []),
       owners: List.from(json['owners'] ?? []),
       admins: List.from(json['admins'] ?? []),
       employees: List.from(json['employees'] ?? []),
       requests: List.from(json['requests'] ?? []),
-      registrationTD: json['registrationTD'] is Timestamp
-          ? json['registrationTD']
+      creationTD: json['creationTD'] is Timestamp
+          ? json['creationTD']
           : Timestamp(0, 0),
-      registeredBy: json['registeredBy'] ?? '',
+      createdBy: json['createdBy'] ?? '',
       deactivate: json['deactivate'] ?? false,
     );
   }
@@ -81,20 +81,20 @@ class OrgModel extends Organization {
       'name': name,
       'bio': bio,
       'avatar': avatar,
-      'address': address.toJson(),
+      'location': location.toJson(),
       'socialHandles': socialHandles,
       'owners': owners,
       'admins': admins,
       'employees': employees,
       'requests': requests,
-      'registrationTD': registrationTD,
-      'registeredBy': registeredBy,
+      'creationTD': creationTD,
+      'createdBy': createdBy,
       'deactivate': deactivate,
     };
   }
 
   @override
   String toString() {
-    return 'OrgModel(id: $id, name: $name, bio: $bio, avatar: $avatar, address: $address, socialHandles: $socialHandles, owners: $owners, admins: $admins, employees: $employees, requests: $requests, registrationTD: $registrationTD, registeredBy: $registeredBy, deactivate: $deactivate)';
+    return 'BusinessModel(id: $id, name: $name, bio: $bio, avatar: $avatar, location: $location, socialHandles: $socialHandles, owners: $owners, admins: $admins, employees: $employees, requests: $requests, creationTD: $creationTD, createdBy: $createdBy, deactivate: $deactivate)';
   }
 }

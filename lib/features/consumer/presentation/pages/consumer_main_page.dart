@@ -16,7 +16,7 @@ class _ConsumerMainPageState extends State<ConsumerMainPage> {
   @override
   void initState() {
     super.initState();
-    context.read<ConsumerBloc>().add(GetAllConsumersEvent());
+    
   }
 
   @override

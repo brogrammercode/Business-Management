@@ -1,82 +1,116 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
+import 'dart:developer' as dev;
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gas/core/utils/location.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
-class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const TransparentAppBar({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-        toolbarHeight: 0,
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
-        systemOverlayStyle: SystemUiOverlayStyle(
-            systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
-            systemNavigationBarIconBrightness:
-                Theme.of(context).brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark,
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness:
-                Theme.of(context).brightness == Brightness.dark
-                    ? Brightness.light
-                    : Brightness.dark));
+String? validationForEmpty({required String? value, String label = ""}) {
+  if (value == null || value.isEmpty) {
+    return "Please enter the $label";
   }
-
-  @override
-  Size get preferredSize => const Size(double.infinity, 0);
+  return null;
 }
 
 class CommonTextField extends StatelessWidget {
-  final String? labelText;
-  final TextEditingController? controller;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
+  final String labelText;
+  final String? hintText;
+  final TextEditingController controller;
+  final int? maxLines;
+  final int? maxLength;
+  final int? minLines;
+  final bool isEnabled;
+  final TextInputType keyboardType;
+  final IconData? suffixIcon;
   final void Function()? onTap;
-  final bool? readOnly;
+  final String? Function(String?)? validator;
+  final bool underlineBorderedTextField;
+
   const CommonTextField({
+    required this.labelText,
+    this.hintText,
+    required this.controller,
+    this.maxLength,
+    this.maxLines,
+    this.minLines,
+    this.isEnabled = true,
+    this.keyboardType = TextInputType.text,
     super.key,
-    this.labelText,
-    this.controller,
-    this.keyboardType,
-    this.validator,
+    this.suffixIcon,
     this.onTap,
-    this.readOnly,
+    this.validator,
+    this.underlineBorderedTextField = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      cursorColor: Colors.black,
-      maxLines: null,
-      keyboardType: keyboardType,
-      validator: validator,
+    return GestureDetector(
       onTap: onTap,
-      readOnly: readOnly ?? false,
-      style: TextStyle(
-          color: Theme.of(context).iconTheme.color,
-          fontWeight: FontWeight.bold),
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Colors.grey, width: 1)),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide:
-                BorderSide(color: Theme.of(context).primaryColor, width: 2)),
+      child: AbsorbPointer(
+        absorbing: !isEnabled,
+        child: TextFormField(
+          controller: controller,
+          maxLines: maxLines,
+          minLines: minLines,
+          maxLength: maxLength,
+          enabled: isEnabled && onTap == null,
+          keyboardType: keyboardType,
+          validator: validator,
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium!
+              .copyWith(fontWeight: FontWeight.bold),
+          decoration: InputDecoration(
+            labelText: labelText,
+            hintText: hintText,
+            labelStyle: Theme.of(context)
+                .textTheme
+                .bodyMedium!
+                .copyWith(fontWeight: FontWeight.bold),
+            suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+            border: underlineBorderedTextField
+                ? const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black26),
+                  )
+                : OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(.5),
+                    ),
+                  ),
+            enabledBorder: underlineBorderedTextField
+                ? const UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black26),
+                  )
+                : OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.grey.withOpacity(.5),
+                    ),
+                  ),
+            focusedBorder: underlineBorderedTextField
+                ? UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Theme.of(context).primaryColor),
+                  )
+                : OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+          ),
+        ),
       ),
     );
   }
@@ -85,8 +119,13 @@ class CommonTextField extends StatelessWidget {
 class CommonFloatingActionButton extends StatelessWidget {
   final void Function() onPressed;
   final IconData icon;
-  const CommonFloatingActionButton(
-      {super.key, required this.onPressed, required this.icon});
+  final bool loading;
+  const CommonFloatingActionButton({
+    super.key,
+    required this.onPressed,
+    required this.icon,
+    this.loading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,17 +137,20 @@ class CommonFloatingActionButton extends StatelessWidget {
           foregroundColor: Theme.of(context).primaryColor,
           elevation: 0,
           backgroundColor: Theme.of(context).primaryColor.withOpacity(1),
-          child: Icon(icon, color: Colors.white)),
+          child: loading
+              ? CircularProgressIndicator(
+                  color: Colors.white, strokeWidth: 2.sp)
+              : Icon(icon, color: Colors.white)),
     );
   }
 }
 
-class ProfileImagePicker extends StatelessWidget {
+class CommonImagePicker extends StatelessWidget {
   final File? profileImage;
   final String? networkImage;
   final Function(File) onImageSelected;
 
-  const ProfileImagePicker({
+  const CommonImagePicker({
     super.key,
     this.profileImage,
     required this.onImageSelected,
@@ -355,4 +397,201 @@ Future<void> openPopUp({
       );
     },
   );
+}
+
+Future<UserLocationModel> getUserLocationFromPosition(Position position) async {
+  try {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+
+    if (placemarks.isNotEmpty) {
+      Placemark place = placemarks.first;
+
+      String continent = _getContinentFromCountry(place.country ?? "");
+
+      return UserLocationModel(
+        city: place.subAdministrativeArea ?? "",
+        area: place.locality ?? "",
+        pincode: place.postalCode ?? "",
+        locality: place.thoroughfare ?? "",
+        state: place.administrativeArea ?? "",
+        country: place.country ?? "",
+        continent: continent,
+        geopoint: GeoPoint(position.latitude, position.longitude),
+        updateTD: Timestamp.now(),
+      );
+    } else {
+      throw Exception("No placemarks found");
+    }
+  } catch (e) {
+    dev.log("ERROR_GETTING_LOCATION_DATA: $e");
+    rethrow;
+  }
+}
+
+// 🔹 Helper function to get continent based on country
+String _getContinentFromCountry(String country) {
+  const Map<String, String> countryToContinent = {
+    "India": "Asia",
+    "United States": "North America",
+    "Canada": "North America",
+    "Brazil": "South America",
+    "United Kingdom": "Europe",
+    "Germany": "Europe",
+    "Australia": "Australia",
+    "South Africa": "Africa",
+    "Japan": "Asia",
+  };
+
+  return countryToContinent[country] ?? "Unknown";
+}
+
+/// 🌍 Calculates distance between points using the Haversine formula.
+double calculateDistance({
+  LatLng? point1,
+  LatLng? point2,
+  List<LatLng>? points,
+}) {
+  const double R = 6371; // 🌎 Earth radius in km
+
+  double degToRad(double deg) => deg * (pi / 180);
+
+  double haversine(double lat1, double lon1, double lat2, double lon2) {
+    double dLat = degToRad(lat2 - lat1);
+    double dLon = degToRad(lon2 - lon1);
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(degToRad(lat1)) *
+            cos(degToRad(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return R * c;
+  }
+
+  /// 📍 Distance between two points
+  if (point1 != null && point2 != null) {
+    return haversine(
+        point1.latitude, point1.longitude, point2.latitude, point2.longitude);
+  }
+
+  /// 🛣️ Total distance for multiple points
+  if (points != null && points.length > 1) {
+    double totalDistance = 0.0;
+    for (int i = 0; i < points.length - 1; i++) {
+      totalDistance += haversine(
+        points[i].latitude,
+        points[i].longitude,
+        points[i + 1].latitude,
+        points[i + 1].longitude,
+      );
+    }
+    return totalDistance;
+  }
+
+  throw ArgumentError(
+      '⚠️ Provide either (point1 & point2) or a list of points.');
+}
+
+String mapImage({required List<GeoPoint> points}) {
+  if (points.isEmpty) {
+    throw ArgumentError("Points list cannot be empty");
+  }
+
+  // If only one point, show a single marker
+  if (points.length == 1) {
+    return "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+        "pin-l+000000(${points.first.longitude},${points.first.latitude})"
+        "/auto/800x800?padding=120&access_token=pk.eyJ1Ijoic2F1cmFiaC10ZWNoMjYwMyIsImEiOiJjbDk4b2FwemQwcTU4M3BtdjYzNHNkc3d1In0.K3wmWSc7atSi-EqkGtKbwg";
+  }
+
+  // Start (black) and End (green) markers
+  String markers =
+      "pin-l+000000(${points.first.longitude},${points.first.latitude}),"
+      "pin-l+006600(${points.last.longitude},${points.last.latitude})";
+
+  // Generate polyline path
+  String path = points.map((p) => "${p.longitude},${p.latitude}").join(";");
+
+  return "https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/"
+      "$markers,"
+      "path-5+ff0000-0.8($path)"
+      "/auto/800x800?padding=120&access_token=pk.eyJ1Ijoic2F1cmFiaC10ZWNoMjYwMyIsImEiOiJjbDk4b2FwemQwcTU4M3BtdjYzNHNkc3d1In0.K3wmWSc7atSi-EqkGtKbwg";
+}
+
+void showSnack(
+    {required BuildContext context,
+    IconData icon = Iconsax.close_circle5,
+    Color iconColor = Colors.red,
+    required String text}) {
+  ScaffoldMessenger.of(context).clearSnackBars();
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.white,
+      content: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20.r,
+            color: iconColor,
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      )));
+}
+
+Future<List<LatLng>> fetchRoute({
+  required LatLng consumerLatLng,
+  required LatLng providerLatLng,
+  String? lastFetchedRoute,
+}) async {
+  final String osrmUrl =
+      "https://router.project-osrm.org/route/v1/driving/${providerLatLng.longitude},${providerLatLng.latitude};${consumerLatLng.longitude},${consumerLatLng.latitude}?overview=full&geometries=geojson";
+
+  try {
+    final response = await http.get(Uri.parse(osrmUrl));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final newRoute =
+          json.encode(data["routes"][0]["geometry"]["coordinates"]);
+
+      if (newRoute == lastFetchedRoute) {
+        return [];
+      }
+
+      final List<dynamic> coordinates =
+          data["routes"][0]["geometry"]["coordinates"];
+      return coordinates
+          .map<LatLng>(
+              (coord) => LatLng(coord[1] as double, coord[0] as double))
+          .toList();
+    } else {
+      debugPrint("Failed to fetch route: ${response.statusCode}");
+      return [];
+    }
+  } catch (e) {
+    debugPrint("Error fetching route: $e");
+    return [];
+  }
+}
+
+call({required BuildContext context, required String phoneNumber}) async {
+  final Uri phoneUri = Uri.parse("tel:$phoneNumber");
+
+  if (await canLaunchUrl(phoneUri) && (phoneNumber.isNotEmpty)) {
+    await launchUrl(phoneUri);
+  } else {
+    showSnack(
+        // ignore: use_build_context_synchronously
+        context: context,
+        text: "Can't make a call now, Please try again later");
+  }
 }

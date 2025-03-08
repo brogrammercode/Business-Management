@@ -9,9 +9,12 @@ import 'package:gas/features/consumer/domain/usecases/delete_consumer.dart';
 import 'package:gas/features/consumer/domain/usecases/get_all_consumers.dart';
 import 'package:gas/features/consumer/domain/usecases/update_consumer.dart';
 import 'package:gas/features/consumer/presentation/bloc/consumer_bloc.dart';
-import 'package:gas/features/organisation/data/data_source/org_remote_ds.dart';
-import 'package:gas/features/organisation/domain/repositories/org_repo.dart';
-import 'package:gas/features/organisation/presentation/cubit/org_cubit.dart';
+import 'package:gas/features/business/data/data_source/business_remote_ds.dart';
+import 'package:gas/features/business/domain/repositories/business_repo.dart';
+import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:gas/features/employee/data/data_source/employee_remote_ds.dart';
+import 'package:gas/features/employee/domain/repo/employee_remote_repo.dart';
+import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 class Injections {
@@ -24,8 +27,8 @@ class Injections {
     _getIt.registerFactory<AuthCubit>(() => AuthCubit(repo: _getIt()));
 
     // org
-    _getIt.registerFactory<OrgRepo>(() => OrgRemoteDs());
-    _getIt.registerFactory<OrgCubit>(() => OrgCubit(repo: _getIt()));
+    _getIt.registerFactory<BusinessRepo>(() => BusinessRemoteDs());
+    _getIt.registerFactory<BusinessCubit>(() => BusinessCubit(repo: _getIt()));
 
     // consumers
     _getIt.registerFactory<ConsumerDataSource>(() => ConsumerDataSourceImpl());
@@ -44,6 +47,10 @@ class Injections {
           updateConsumer: _getIt(),
           deleteConsumer: _getIt(),
         ));
+
+    // employee
+    _getIt.registerFactory<EmployeeRemoteRepo>(() => EmployeeRemoteDs());
+    _getIt.registerFactory<EmployeeCubit>(() => EmployeeCubit(repo: _getIt()));
   }
 
   static T get<T extends Object>() {

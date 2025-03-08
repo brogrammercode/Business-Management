@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gas/features/organisation/presentation/pages/organisation_main.dart';
+import 'package:gas/features/business/domain/repositories/business_repo.dart';
+import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:gas/features/business/presentation/pages/business_main.dart';
+import 'package:gas/features/business/presentation/pages/business_stat_page.dart';
+import 'package:gas/features/consumer/presentation/bloc/consumer_bloc.dart';
+import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:gas/features/vehicle/presentation/pages/vehicle_main_page.dart';
 import 'package:gas/features/delivery/presentation/pages/delivery_page.dart';
 import 'package:gas/features/home/presentation/widgets/home_widget.dart';
@@ -20,10 +27,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _activeItem = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<BusinessCubit>().initBusinessSubscription();
+    context.read<ConsumerBloc>().add(GetAllConsumersEvent());
+    context.read<EmployeeCubit>().initEmployeeSubscription();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TransparentAppBar(),
+      appBar: AppBar(toolbarHeight: 0),
       bottomNavigationBar: _bottomNavigationBar(context),
       floatingActionButton: _bottomNavItem()[_activeItem]['showFloating']
           ? CommonFloatingActionButton(
@@ -32,7 +48,7 @@ class _HomePageState extends State<HomePage> {
           : null,
       body: Column(
         children: [
-          SizedBox(height: 15.h),
+          SizedBox(height: 5.h),
           HomePageHeader(
             topText: _bottomNavItem()[_activeItem]['label'],
             bottomText: DateFormat('dd MMM, yyyy').format(DateTime.now()),
@@ -73,16 +89,48 @@ class _HomePageState extends State<HomePage> {
   }
 
   List _bottomNavItem() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final businesses = context.watch<BusinessCubit>().state.businesses;
+
+    final alreadyBusiness = businesses.any((e) =>
+        e.owners.any((e) => e.id == uid) ||
+        e.admins.any((e) => e.id == uid) ||
+        e.requests.any((e) => e.id == uid) ||
+        e.employees.any((e) => e.id == uid));
+    BusinessParams? myBusiness;
+    if (alreadyBusiness) {
+      myBusiness = businesses.firstWhere((e) =>
+          e.owners.any((e) => e.id == uid) ||
+          e.admins.any((e) => e.id == uid) ||
+          e.requests.any((e) => e.id == uid) ||
+          e.employees.any((e) => e.id == uid));
+      context.read<BusinessCubit>().updateMyBusinessParams(myBusiness: [
+        MyBusinessParams(
+          business: myBusiness.business,
+          myRole: myBusiness.owners.any((e) => e.id == uid)
+              ? "Owner"
+              : myBusiness.admins.any((e) => e.id == uid)
+                  ? "Admin"
+                  : myBusiness.employees.any((e) => e.id == uid)
+                      ? "Employee"
+                      : myBusiness.requests.any((e) => e.id == uid)
+                          ? "Requested"
+                          : "",
+        )
+      ]);
+    }
     return [
       {
         "icon": Iconsax.shop,
         "activeIcon": Iconsax.shop,
-        "label": "My Organisation",
-        "page": const OrganisationMain(),
+        "label":
+            alreadyBusiness ? myBusiness?.business.name ?? "" : "My Business",
+        "page":
+            alreadyBusiness ? const BusinessStatPage() : const BusinessMain(),
         "floatingIcon": Iconsax.shop_add,
         "floatingOnPressed": () =>
             Navigator.pushNamed(context, AppRoutes.addOrg),
-        "showFloating": true,
+        "showFloating": !alreadyBusiness,
         "actionIcon": Iconsax.search_normal_1,
         "actionOnPressed": () {},
         "onPressed": () => setState(() => _activeItem = 0)

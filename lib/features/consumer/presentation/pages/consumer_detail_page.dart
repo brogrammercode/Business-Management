@@ -14,7 +14,7 @@ class ConsumerDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TransparentAppBar(),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,7 +56,7 @@ class ConsumerDetailPage extends StatelessWidget {
                   ],
                 )),
             SizedBox(height: 20.h),
-            ProfileImagePicker(
+            CommonImagePicker(
                 networkImage: consumer.image.isEmpty
                     ? NetworkImagePath.consumerImage
                     : consumer.image,

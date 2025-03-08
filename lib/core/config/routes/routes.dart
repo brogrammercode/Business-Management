@@ -4,7 +4,7 @@ import 'package:gas/features/auth/presentation/pages/auth_page.dart';
 import 'package:gas/features/consumer/presentation/pages/consumer_detail_page.dart';
 import 'package:gas/features/home/presentation/pages/home_page.dart';
 import 'package:gas/features/consumer/presentation/pages/add_consumer_page.dart';
-import 'package:gas/features/organisation/presentation/pages/add_org_page.dart';
+import 'package:gas/features/business/presentation/pages/add_business_page.dart';
 
 class AppRoutes {
   static const String core = '/';
@@ -33,7 +33,7 @@ class AppRoutes {
 
       // org
       case addOrg:
-        return MaterialPageRoute(builder: (_) => const AddOrgPage());
+        return MaterialPageRoute(builder: (_) => const AddBusinessPage());
 
       // consumer
       case addUser:

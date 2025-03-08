@@ -7,8 +7,9 @@ import 'package:gas/core/config/theme/themes.dart';
 import 'package:gas/core/injections/container.dart';
 import 'package:gas/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:gas/features/consumer/presentation/bloc/consumer_bloc.dart';
-import 'package:gas/features/organisation/presentation/cubit/org_cubit.dart';
-import 'package:gas/firebase_options.dart';
+import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:gas/core/config/api/firebase_options.dart';
+import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,9 +26,12 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(create: (_) => Injections.get<AuthCubit>()),
-        BlocProvider<OrgCubit>(create: (_) => Injections.get<OrgCubit>()),
+        BlocProvider<BusinessCubit>(
+            create: (_) => Injections.get<BusinessCubit>()),
         BlocProvider<ConsumerBloc>(
             create: (_) => Injections.get<ConsumerBloc>()),
+        BlocProvider<EmployeeCubit>(
+            create: (_) => Injections.get<EmployeeCubit>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(411.42857142857144, 843.4285714285714),

@@ -57,9 +57,9 @@ class AuthRemoteDs implements AuthRepo {
             upiID: "",
             drivingLicenseURL: "",
             panCardURL: "",
-            orgID: "",
-            registrationTD: Timestamp.now(),
-            registeredBy: user.uid,
+            businessID: "",
+            creationTD: Timestamp.now(),
+            createdBy: user.uid,
             deactivate: false,
           );
           await _addUser(employee: newUser);
