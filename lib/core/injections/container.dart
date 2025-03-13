@@ -15,6 +15,9 @@ import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/employee/data/data_source/employee_remote_ds.dart';
 import 'package:gas/features/employee/domain/repo/employee_remote_repo.dart';
 import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
+import 'package:gas/features/home/data/data_source/home_remote_ds.dart';
+import 'package:gas/features/home/domain/repo/home_repo.dart';
+import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 class Injections {
@@ -25,6 +28,11 @@ class Injections {
     // auth
     _getIt.registerFactory<AuthRepo>(() => AuthRemoteDs());
     _getIt.registerFactory<AuthCubit>(() => AuthCubit(repo: _getIt()));
+
+    // home
+    _getIt.registerFactory<HomeRemoteRepo>(() => HomeRemoteDs());
+    _getIt
+        .registerFactory<HomeCubit>(() => HomeCubit(homeRemoteRepo: _getIt()));
 
     // org
     _getIt.registerFactory<BusinessRepo>(() => BusinessRemoteDs());

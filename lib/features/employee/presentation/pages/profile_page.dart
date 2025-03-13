@@ -40,19 +40,23 @@ class ProfilePage extends StatelessWidget {
                 final userId = user?.id ?? "";
 
                 if (businesses
-                    .any((e) => e.owners.any((owner) => owner.id == userId))) {
+                    .any((e) =>
+                    e.owners.any((owner) => owner.employee.id == userId))) {
                   return "Owner";
                 }
                 if (businesses.any(
-                    (e) => e.requests.any((request) => request.id == userId))) {
+                    (e) => e.requests
+                    .any((request) => request.employee.id == userId))) {
                   return "Requested";
                 }
                 if (businesses
-                    .any((e) => e.admins.any((admin) => admin.id == userId))) {
+                    .any((e) =>
+                    e.admins.any((admin) => admin.employee.id == userId))) {
                   return "Admin";
                 }
                 if (businesses.any((e) =>
-                    e.employees.any((employee) => employee.id == userId))) {
+                    e.employees
+                    .any((employee) => employee.employee.id == userId))) {
                   return "Employee";
                 }
                 return "";

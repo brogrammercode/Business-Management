@@ -1,13 +1,38 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 
-// class Repair {
-//   final String id;
-//   final String vehicleID;
-//   final String type;
-//   final num fees;
-//   final String address
-//   final String businessID;
-//   final Timestamp registrationTD;
-//   final String registeredBy;
-//   final bool deactivate;
-// }
+class Repair extends Equatable {
+  final String id;
+  final String vehicleID;
+  final String type;
+  final num fees;
+  final String location;
+  final String businessID;
+  final Timestamp creationTD;
+  final String createdBy;
+  final bool deactivate;
+
+  const Repair(
+      {required this.id,
+      required this.vehicleID,
+      required this.type,
+      required this.fees,
+      required this.location,
+      required this.businessID,
+      required this.creationTD,
+      required this.createdBy,
+      required this.deactivate});
+  
+  @override
+  List<Object?> get props => [
+        id,
+        vehicleID,
+        type,
+        fees,
+        location,
+        businessID,
+        creationTD,
+        createdBy,
+        deactivate,
+      ];
+}

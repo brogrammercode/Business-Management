@@ -23,7 +23,7 @@ class _AddBusinessPageState extends State<AddBusinessPage> {
   File? _avatar;
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
-  final _addressController = TextEditingController();
+  final _addressController = TextEditingController(text: "h");
   final _socialController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -64,10 +64,10 @@ class _AddBusinessPageState extends State<AddBusinessPage> {
                         EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     child: CommonTextField(
                       controller: _nameController,
-                      labelText: 'Organization Name',
+                      labelText: 'Business Name',
                       keyboardType: TextInputType.name,
                       validator: (v) => validationForEmpty(
-                          value: v, label: "Organization Name"),
+                          value: v, label: "Business Name"),
                     ),
                   ),
                   Padding(
@@ -75,7 +75,7 @@ class _AddBusinessPageState extends State<AddBusinessPage> {
                         EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                     child: CommonTextField(
                       controller: _bioController,
-                      labelText: 'Organization Description',
+                      labelText: 'Business Description',
                       keyboardType: TextInputType.name,
                     ),
                   ),
@@ -85,6 +85,7 @@ class _AddBusinessPageState extends State<AddBusinessPage> {
                     child: CommonTextField(
                       controller: _addressController,
                       labelText: 'Select Address',
+                      
                       keyboardType: TextInputType.name,
                       validator: (v) =>
                           validationForEmpty(value: v, label: "address"),

@@ -10,7 +10,10 @@ import 'package:gas/features/consumer/presentation/bloc/consumer_bloc.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/core/config/api/firebase_options.dart';
 import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
+import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -26,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(create: (_) => Injections.get<AuthCubit>()),
+        BlocProvider<HomeCubit>(create: (_) => Injections.get<HomeCubit>()),
         BlocProvider<BusinessCubit>(
             create: (_) => Injections.get<BusinessCubit>()),
         BlocProvider<ConsumerBloc>(
@@ -40,6 +44,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             title: 'GAS',
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             themeMode: ThemeMode.light,
             theme: AppThemes.lightTheme,

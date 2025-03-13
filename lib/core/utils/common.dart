@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/utils/location.dart';
+import 'package:gas/main.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:iconsax/iconsax.dart';
@@ -17,6 +18,30 @@ import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+
+List<Widget> get commonEmpty {
+  return [
+    SizedBox(height: 200.h),
+    CachedNetworkImage(
+      height: 50.h,
+      width: 50.h,
+      fit: BoxFit.cover,
+      imageUrl: "https://cdn-icons-png.flaticon.com/128/7486/7486760.png",
+    ),
+    SizedBox(height: 30.h),
+    const Text("It's quite in here...",
+        style: TextStyle(fontWeight: FontWeight.bold)),
+    SizedBox(height: 10.h),
+    Padding(
+      padding: EdgeInsets.symmetric(horizontal: 70.w),
+      child: const Text(
+        "You can explore our services, our trustworthy and professional service providers to get the best user experience.",
+        style: TextStyle(color: Colors.grey),
+        textAlign: TextAlign.center,
+      ),
+    ),
+  ];
+}
 
 String? validationForEmpty({required String? value, String label = ""}) {
   if (value == null || value.isEmpty) {
@@ -518,33 +543,53 @@ String mapImage({required List<GeoPoint> points}) {
       "/auto/800x800?padding=120&access_token=pk.eyJ1Ijoic2F1cmFiaC10ZWNoMjYwMyIsImEiOiJjbDk4b2FwemQwcTU4M3BtdjYzNHNkc3d1In0.K3wmWSc7atSi-EqkGtKbwg";
 }
 
-void showSnack(
-    {required BuildContext context,
-    IconData icon = Iconsax.close_circle5,
-    Color iconColor = Colors.red,
-    required String text}) {
-  ScaffoldMessenger.of(context).clearSnackBars();
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+void showSnack({
+  BuildContext? context,
+  IconData icon = Iconsax.close_circle5,
+  Color iconColor = Colors.red,
+  required String text,
+}) {
+  final BuildContext? buildContext = context ?? navigatorKey.currentContext;
+
+  if (buildContext == null) {
+    debugPrint("❌ ERROR: No valid context found for Snackbar!");
+    return;
+  }
+
+  ScaffoldMessenger.of(buildContext).clearSnackBars();
+  ScaffoldMessenger.of(buildContext).showSnackBar(
+    SnackBar(
       backgroundColor: Colors.white,
+      behavior: SnackBarBehavior.floating,
       content: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 20.r,
-            color: iconColor,
-          ),
+          Icon(icon, size: 20.r, color: iconColor),
           SizedBox(width: 10.w),
           Expanded(
             child: Text(
               text,
-              style: Theme.of(context)
+              style: Theme.of(buildContext)
                   .textTheme
-                  .bodySmall!
-                  .copyWith(fontWeight: FontWeight.bold),
+                  .bodySmall
+                  ?.copyWith(fontWeight: FontWeight.bold, color: Colors.black),
             ),
           ),
         ],
-      )));
+      ),
+    ),
+  );
+}
+
+void clearAllSnack({BuildContext? context}) {
+  final BuildContext? buildContext = context ?? navigatorKey.currentContext;
+
+  if (buildContext == null) {
+    debugPrint("❌ ERROR: No valid context found to clear SnackBars!");
+    return;
+  }
+
+  ScaffoldMessenger.of(buildContext).clearSnackBars();
 }
 
 Future<List<LatLng>> fetchRoute({

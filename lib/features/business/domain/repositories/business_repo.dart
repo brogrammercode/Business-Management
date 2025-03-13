@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:gas/features/employee/data/models/employee_model.dart';
 import 'package:gas/features/business/data/models/business_model.dart';
+import 'package:gas/features/employee/data/models/salary_model.dart';
+import 'package:gas/features/employee/data/models/track_model.dart';
 
 abstract class BusinessRepo {
   Stream<List<BusinessParams>> getBusinesses();
@@ -12,10 +14,10 @@ abstract class BusinessRepo {
 
 class BusinessParams {
   final BusinessModel business;
-  final List<EmployeeModel> owners;
-  final List<EmployeeModel> admins;
-  final List<EmployeeModel> employees;
-  final List<EmployeeModel> requests;
+  final List<EmployeeParam> owners;
+  final List<EmployeeParam> admins;
+  final List<EmployeeParam> employees;
+  final List<EmployeeParam> requests;
 
   BusinessParams(
       {required this.business,
@@ -23,4 +25,13 @@ class BusinessParams {
       required this.admins,
       required this.employees,
       required this.requests});
+}
+
+class EmployeeParam {
+  final EmployeeModel employee;
+  final List<SalaryModel> salaries;
+  final List<TrackModel> tracks;
+
+  EmployeeParam(
+      {required this.employee, required this.salaries, required this.tracks});
 }

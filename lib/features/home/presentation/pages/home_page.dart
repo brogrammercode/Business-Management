@@ -10,6 +10,7 @@ import 'package:gas/features/business/presentation/pages/business_main.dart';
 import 'package:gas/features/business/presentation/pages/business_stat_page.dart';
 import 'package:gas/features/consumer/presentation/bloc/consumer_bloc.dart';
 import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
+import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 import 'package:gas/features/vehicle/presentation/pages/vehicle_main_page.dart';
 import 'package:gas/features/delivery/presentation/pages/delivery_page.dart';
 import 'package:gas/features/home/presentation/widgets/home_widget.dart';
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    context.read<HomeCubit>().initializeIsLocationEnabledListener();
     context.read<BusinessCubit>().initBusinessSubscription();
     context.read<ConsumerBloc>().add(GetAllConsumersEvent());
     context.read<EmployeeCubit>().initEmployeeSubscription();
@@ -56,7 +58,7 @@ class _HomePageState extends State<HomePage> {
             actionIcon: _bottomNavItem()[_activeItem]['actionIcon'],
           ),
           SizedBox(height: 10.h),
-          Expanded(child: _bottomNavItem()[_activeItem]['page'])
+          Expanded(child: _bottomNavItem()[_activeItem]['page']),
         ],
       ),
     );
@@ -93,27 +95,27 @@ class _HomePageState extends State<HomePage> {
     final businesses = context.watch<BusinessCubit>().state.businesses;
 
     final alreadyBusiness = businesses.any((e) =>
-        e.owners.any((e) => e.id == uid) ||
-        e.admins.any((e) => e.id == uid) ||
-        e.requests.any((e) => e.id == uid) ||
-        e.employees.any((e) => e.id == uid));
+        e.owners.any((e) => e.employee.id == uid) ||
+        e.admins.any((e) => e.employee.id == uid) ||
+        e.requests.any((e) => e.employee.id == uid) ||
+        e.employees.any((e) => e.employee.id == uid));
     BusinessParams? myBusiness;
     if (alreadyBusiness) {
       myBusiness = businesses.firstWhere((e) =>
-          e.owners.any((e) => e.id == uid) ||
-          e.admins.any((e) => e.id == uid) ||
-          e.requests.any((e) => e.id == uid) ||
-          e.employees.any((e) => e.id == uid));
+          e.owners.any((e) => e.employee.id == uid) ||
+          e.admins.any((e) => e.employee.id == uid) ||
+          e.requests.any((e) => e.employee.id == uid) ||
+          e.employees.any((e) => e.employee.id == uid));
       context.read<BusinessCubit>().updateMyBusinessParams(myBusiness: [
         MyBusinessParams(
           business: myBusiness.business,
-          myRole: myBusiness.owners.any((e) => e.id == uid)
+          myRole: myBusiness.owners.any((e) => e.employee.id == uid)
               ? "Owner"
-              : myBusiness.admins.any((e) => e.id == uid)
+              : myBusiness.admins.any((e) => e.employee.id == uid)
                   ? "Admin"
-                  : myBusiness.employees.any((e) => e.id == uid)
+                  : myBusiness.employees.any((e) => e.employee.id == uid)
                       ? "Employee"
-                      : myBusiness.requests.any((e) => e.id == uid)
+                      : myBusiness.requests.any((e) => e.employee.id == uid)
                           ? "Requested"
                           : "",
         )

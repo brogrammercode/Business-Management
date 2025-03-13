@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 class BusinessMain extends StatefulWidget {
@@ -54,7 +55,7 @@ class _BusinessMainState extends State<BusinessMain> {
                                 title: business.business.name,
                                 subtitle: business.owners.isEmpty
                                     ? "Owner"
-                                    : business.owners.first.name),
+                                    : business.owners.first.employee.name),
                             SizedBox(height: 20.h),
                             _buildSectionTitle(context, "Created On"),
                             Text(DateFormat("dd MMM, yyyy")
@@ -64,8 +65,11 @@ class _BusinessMainState extends State<BusinessMain> {
                             SizedBox(height: 10.h),
                             _buildParticipantsRow(
                                 images:
-                                    participants.map((e) => e.avatar).toList(),
-                                context: context),
+                                    participants
+                                    .map((e) => e.employee.avatar)
+                                    .toList(),
+                                context: context,
+                                businessID: business.business.id),
                           ],
                         ),
                       ),
@@ -114,7 +118,9 @@ class _BusinessMainState extends State<BusinessMain> {
   }
 
   Widget _buildParticipantsRow(
-      {required List<String> images, required BuildContext context}) {
+      {required List<String> images,
+      required BuildContext context,
+      required String businessID}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -141,7 +147,21 @@ class _BusinessMainState extends State<BusinessMain> {
             ),
           ),
         ),
-        Text('${images.length} People joined'),
+        TextButton(
+            onPressed: () => context
+                .read<BusinessCubit>()
+                .requestToJoinBusiness(businessID: businessID),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Request to Join',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 7.w),
+                Icon(Iconsax.arrow_right_3, size: 14.r)
+              ],
+            )),
       ],
     );
   }
@@ -207,5 +227,6 @@ class _BusinessMainState extends State<BusinessMain> {
 
   void _onOrgtap({required String businessID}) async {
     context.read<BusinessCubit>().updateBusinessID(businessID: businessID);
+    //
   }
 }

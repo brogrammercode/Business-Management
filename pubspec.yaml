@@ -41,6 +41,7 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^8.1.6
   flutter_image_compress: ^2.3.0
+  flutter_map:
   flutter_screenutil: ^5.9.3
   geocoding: ^3.0.0
   geolocator: ^13.0.2
@@ -51,7 +52,7 @@ dependencies:
   iconsax: ^0.0.8
   image_picker: ^1.1.2
   intl: ^0.19.0
-  latlong2: ^0.9.1
+  latlong2:
   shared_preferences: ^2.3.2
   shimmer_container: ^0.0.2
   simple_circular_progress_bar: ^1.0.2
