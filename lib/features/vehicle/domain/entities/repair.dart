@@ -4,8 +4,8 @@ import 'package:equatable/equatable.dart';
 class Repair extends Equatable {
   final String id;
   final String vehicleID;
-  final String type;
-  final num fees;
+  final String type; // field
+  final num fees; // field
   final String location;
   final String businessID;
   final Timestamp creationTD;

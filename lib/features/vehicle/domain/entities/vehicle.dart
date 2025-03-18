@@ -3,16 +3,16 @@ import 'package:equatable/equatable.dart';
 
 class Vehicle extends Equatable {
   final String id;
-  final String name;
-  final String brand;
-  final String model;
-  final String logo;
-  final String regOdometer;
-  final String regNo;
-  final String vehicleFrontURL;
-  final String vehicleBackURL;
-  final String vehicleRCURL;
-  final String vehicleInsuranceURL;
+  final String name; // field
+  final String brand; // field
+  final String model; // field
+  final String regNo; // field
+  final num regOdometer; // field
+  final String logo; // image
+  final String vehicleFrontURL; // image
+  final String vehicleBackURL; // image
+  final String vehicleRCURL; // image
+  final String vehicleInsuranceURL; // image
   final String businessID;
   final Timestamp registrationTD;
   final String registeredBy;

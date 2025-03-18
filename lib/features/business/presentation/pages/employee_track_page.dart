@@ -40,6 +40,7 @@ class EmployeeTrackPage extends StatelessWidget {
         final tracks = selectedEmployee.tracks;
         final allTracks = tracks.expand((e) => e.tracks).toList();
         final selectedEmployeeDetail = selectedEmployee.employee;
+        final salaries = selectedEmployee.salaries;
 
         return Scaffold(
           body: SafeArea(
@@ -58,7 +59,21 @@ class EmployeeTrackPage extends StatelessWidget {
                             points: [selectedEmployeeDetail.address.geopoint]),
                       ),
                     ),
-                    const SliverFillRemaining()
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: salaries.length,
+                              itemBuilder: (context, index) {
+                                return const Padding(
+                                    padding: EdgeInsets.symmetric());
+                              })
+                        ],
+                      ),
+                    ),
+                    const SliverFillRemaining(),
                   ],
                 ),
                 _buildDraggableSheet(allTracks),
@@ -124,19 +139,21 @@ class EmployeeTrackPage extends StatelessWidget {
     tracks.sort((a, b) => b.updateTD.compareTo(a.updateTD));
 
 // Step 2: Remove duplicates but allow same area if 20 min has passed
-    final Map<String, DateTime> lastSeenArea = {};
-    final List<UserLocationModel> filteredTracks = [];
+    // final Map<String, DateTime> lastSeenArea = {};
+    List<UserLocationModel> filteredTracks = [];
 
-    for (var track in tracks) {
-      final area = track.area;
-      final timestamp = track.updateTD.toDate();
+    // for (var track in tracks) {
+    //   final area = track.area;
+    //   final timestamp = track.updateTD.toDate();
 
-      if (!lastSeenArea.containsKey(area) ||
-          timestamp.difference(lastSeenArea[area]!).inMinutes > 20) {
-        filteredTracks.add(track);
-        lastSeenArea[area] = timestamp;
-      }
-    }
+    //   if (!lastSeenArea.containsKey(area) ||
+    //       timestamp.difference(lastSeenArea[area]!).inMinutes > 20) {
+    //     filteredTracks.add(track);
+    //     lastSeenArea[area] = timestamp;
+    //   }
+    // }
+
+    filteredTracks = tracks;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.42,

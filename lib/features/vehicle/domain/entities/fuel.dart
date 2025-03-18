@@ -4,10 +4,10 @@ import 'package:equatable/equatable.dart';
 class Fuel extends Equatable {
   final String id;
   final String vehicleID;
-  final num volume;
-  final num fees;
+  final num volume; // field
+  final num fees; // field
   final String location;
-  final num odometer;
+  final num odometer; // field
   final String businessID;
   final Timestamp creationTD;
   final String createdBy;

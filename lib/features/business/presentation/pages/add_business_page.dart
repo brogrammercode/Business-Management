@@ -10,6 +10,7 @@ import 'package:gas/core/utils/error.dart';
 import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/business/data/models/business_model.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 
 class AddBusinessPage extends StatefulWidget {
   const AddBusinessPage({super.key});
@@ -119,13 +120,14 @@ class _AddBusinessPageState extends State<AddBusinessPage> {
       showSnack(context: context, text: "Please provide a business avatar");
     } else if (_formKey.currentState!.validate()) {
       final td = Timestamp.now();
+      final location = context.read<HomeCubit>().state.lastLocation;
       final success = await context.read<BusinessCubit>().addBusiness(
             business: BusinessModel(
               id: td.millisecondsSinceEpoch.toString(),
               name: _nameController.text,
               bio: _bioController.text,
               avatar: "",
-              location: UserLocationModel(),
+              location: location.isEmpty ? UserLocationModel() : location.first,
               socialHandles: [_socialController.text],
               owners: [FirebaseAuth.instance.currentUser?.uid ?? ""],
               admins: const [],
