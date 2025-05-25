@@ -3,12 +3,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/employee/data/models/employee_model.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 class EmployeeTrackPage extends StatelessWidget {
@@ -46,16 +49,27 @@ class EmployeeTrackPage extends StatelessWidget {
         final salaries = selectedEmployee.salaries;
 
         return Scaffold(
-          body: SafeArea(
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  slivers: [
-                    _buildSliverAppBar(
-                      context: context,
-                      employee: selectedEmployeeDetail,
-                    ),
-                    SliverToBoxAdapter(
+          body: Stack(
+            children: [
+              CustomScrollView(
+                slivers: [
+                  _buildSliverAppBar(
+                    context: context,
+                    employee: selectedEmployeeDetail,
+                  ),
+                  SliverToBoxAdapter(
+                    child: GestureDetector(
+                      onTap: () {
+                        showSnack(
+                          text: "Will be available in next update",
+                          backgroundColor: AppColors.red500,
+                        );
+                        // Navigator.pushNamed(
+                        //   context,
+                        //   AppRoutes.trackPage,
+                        //   arguments: {"employeeID": selectedEmployeeDetail.id},
+                        // );
+                      },
                       child: CachedNetworkImage(
                         height: 300.h,
                         width: double.infinity,
@@ -65,28 +79,28 @@ class EmployeeTrackPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: salaries.length,
-                            itemBuilder: (context, index) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: salaries.length,
+                          itemBuilder: (context, index) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    const SliverFillRemaining(),
-                  ],
-                ),
-                _buildDraggableSheet(allTracks),
-              ],
-            ),
+                  ),
+                  const SliverFillRemaining(),
+                ],
+              ),
+              _buildDraggableSheet(allTracks),
+            ],
           ),
         );
       },
@@ -100,6 +114,14 @@ class EmployeeTrackPage extends StatelessWidget {
     return SliverAppBar(
       expandedHeight: 180.h,
       stretch: true,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      leading: IconButton(
+        onPressed: () => Navigator.pop(context),
+        icon: Icon(Iconsax.arrow_left),
+      ),
       flexibleSpace: FlexibleSpaceBar(
         background: Column(
           mainAxisAlignment: MainAxisAlignment.end,

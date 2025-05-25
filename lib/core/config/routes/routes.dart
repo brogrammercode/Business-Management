@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gas/features/auth/presentation/pages/auth_page.dart';
 import 'package:gas/features/business/presentation/pages/add_business_page.dart';
+import 'package:gas/features/business/presentation/pages/employee_track_page.dart';
+import 'package:gas/features/business/presentation/pages/track_page.dart';
 import 'package:gas/features/delivery/presentation/pages/add_consumer_page.dart';
 import 'package:gas/features/delivery/presentation/pages/all_consumer_page.dart';
 import 'package:gas/features/delivery/presentation/pages/consumer_detail_page.dart';
@@ -14,8 +16,8 @@ class AppRoutes {
   static const String auth = '/auth';
   static const String home = '/home';
 
-  // org
-  static const String addOrg = '/addOrg';
+  // business
+  static const String addBusiness = '/addBusiness';
 
   // consumer
   static const String addUser = '/addUser';
@@ -27,6 +29,10 @@ class AppRoutes {
   static const String allConsumer = '/allConsumer';
   static const String consumerDetail = '/consumerDetail';
   static const String finishDelivery = '/finishDelivery';
+
+  // employee
+  static const String employeeTrack = '/employeeTrack';
+  static const String trackPage = '/trackPage';
 
   // route
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -42,20 +48,9 @@ class AppRoutes {
       case home:
         return MaterialPageRoute(builder: (_) => const HomePage());
 
-      // org
-      case addOrg:
+      // business
+      case addBusiness:
         return MaterialPageRoute(builder: (_) => const AddBusinessPage());
-
-      // consumer
-      // case addUser:
-      //   return MaterialPageRoute(builder: (_) => const AddConsumerPage());
-      // case consumerDetail:
-      //   final args = settings.arguments as Map<String, dynamic>?;
-      //   return MaterialPageRoute(
-      //     builder: (_) => ConsumerDetailPage(
-      //       consumer: args?['consumer'],
-      //     ),
-      //   );
 
       // delivery
       case delivery:
@@ -70,6 +65,18 @@ class AppRoutes {
             builder: (_) => ConsumerDetailPage(consumer: args?['consumer']));
       case finishDelivery:
         return MaterialPageRoute(builder: (_) => const FinishDeliveryPage());
+
+      // employee
+      case employeeTrack:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => EmployeeTrackPage(employeeID: args?['employeeID']),
+        );
+      case trackPage:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => TrackPage(employeeID: args?['employeeID']),
+        );
 
       // default
       default:

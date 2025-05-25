@@ -745,12 +745,12 @@ void clearAllSnack({BuildContext? context}) {
 }
 
 Future<List<LatLng>> fetchRoute({
-  required LatLng consumerLatLng,
-  required LatLng providerLatLng,
+  required LatLng firstLatLng,
+  required LatLng secondLatLng,
   String? lastFetchedRoute,
 }) async {
   final String osrmUrl =
-      "https://router.project-osrm.org/route/v1/driving/${providerLatLng.longitude},${providerLatLng.latitude};${consumerLatLng.longitude},${consumerLatLng.latitude}?overview=full&geometries=geojson";
+      "https://router.project-osrm.org/route/v1/driving/${secondLatLng.longitude},${secondLatLng.latitude};${firstLatLng.longitude},${firstLatLng.latitude}?overview=full&geometries=geojson";
 
   try {
     final response = await http.get(Uri.parse(osrmUrl));

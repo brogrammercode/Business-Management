@@ -17,6 +17,7 @@ import 'package:gas/features/business/domain/repositories/business_repo.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/delivery/data/models/delivery_model.dart';
 import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
+import 'package:gas/features/employee/data/models/employee_model.dart';
 import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 import 'package:iconsax/iconsax.dart';
@@ -653,7 +654,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(width: 15.w),
                   IconButton(
-                    onPressed: () => _onEmployeeTap(),
+                    onPressed: () => _onEmployeeTap(employee: employee),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue400,
                       shape: RoundedRectangleBorder(
@@ -730,7 +731,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(width: 15.w),
                   IconButton(
-                    onPressed: () => _onEmployeeTap(),
+                    onPressed: () => _onEmployeeTap(employee: admin),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.black500,
                       shape: RoundedRectangleBorder(
@@ -807,7 +808,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(width: 15.w),
                   IconButton(
-                    onPressed: () => _onEmployeeTap(),
+                    onPressed: () => _onEmployeeTap(employee: owner),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blue400,
                       shape: RoundedRectangleBorder(
@@ -1058,7 +1059,7 @@ class _HomePageState extends State<HomePage> {
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, AppRoutes.addOrg);
+                    Navigator.pushNamed(context, AppRoutes.addBusiness);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1215,5 +1216,56 @@ class _HomePageState extends State<HomePage> {
     ),
   );
 
-  _onEmployeeTap() {}
+  _onEmployeeTap({required EmployeeModel employee}) {
+    final updatedAgo = timeAgo(employee.address.updateTD.toDate());
+    openBottomSheet(
+      minChildSize: 0.28,
+      initialChildSize: 0.28,
+      context: context,
+      child: Column(
+        children: [
+          bottomSheetTile(
+            context: context,
+            icon: Iconsax.tag_user,
+            title: "View Profile",
+            subtitle: "View employee profile",
+            onTap: () {
+              Navigator.pop(context);
+              showSnack(
+                text: "Will be available in next update",
+                backgroundColor: AppColors.red500,
+              );
+            },
+          ),
+          bottomSheetTile(
+            context: context,
+            icon: Iconsax.gps,
+            title: "Track Employee",
+            subtitle: "Updated $updatedAgo ago",
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(
+                context,
+                AppRoutes.employeeTrack,
+                arguments: {"employeeID": employee.id},
+              );
+            },
+          ),
+          bottomSheetTile(
+            context: context,
+            icon: Iconsax.user_minus,
+            title: "Remove Employee",
+            subtitle: "Remove employee from business",
+            onTap: () {
+              Navigator.pop(context);
+              showSnack(
+                text: "Will be available in next update",
+                backgroundColor: AppColors.red500,
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }
