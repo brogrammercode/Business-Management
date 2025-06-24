@@ -15,7 +15,6 @@ import 'package:gas/core/utils/location_picker.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/delivery/data/models/consumer_model.dart';
 import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
-import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
@@ -151,25 +150,20 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                   controller: _addressController,
                   suffixIcon: Iconsax.arrow_down_1,
                   onTap: () async {
-                    // make a page with flutter map and api key is : "https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=4796c8bcd90d4d4aa12b29a5d7bbcf17",  here we should search and also point on the map and coordinate should come autmaticlaly
-
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => const LocationPickerPage(),
                       ),
-                    );
+                            )
+                            as UserLocationModel?;
 
-                    if (result != null && result is String) {
-                      _addressController.text = result;
-                      _address = UserLocationModel(
-                        state: "Bihar",
-                        area: "Barari",
-                        city: "Bhagalpur",
-                        pincode: "812001",
-                        country: "India",
-                        geopoint: const GeoPoint(0, 0),
-                      );
+                    if (result != null) {
+                      _addressController.text =
+                          "${result.area}, ${result.city}";
+                      setState(() {
+                        _address = result;
+                      });
                     }
                     log("Address: ${_address.city}");
                   },
@@ -303,10 +297,7 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
             );
             final td = Timestamp.now();
             final businessID = context.read<BusinessCubit>().state.businessID;
-            final UserLocationModel location =
-                context.read<HomeCubit>().state.lastLocation.isEmpty
-                    ? UserLocationModel()
-                    : context.read<HomeCubit>().state.lastLocation.first;
+            
             final result = await context.read<DeliveryCubit>().addConsumer(
               image: profileImage,
               consumer: ConsumerModel(
@@ -318,7 +309,7 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                 gender: _genderController.text,
                 dob: Timestamp.fromDate(_dob),
                 consumerNo: _consumerNumberController.text,
-                address: location,
+                address: _address,
                 svNo: _subscriptionVoucherController.text,
                 consumerAadharNo: _consumerAadhaarController.text,
                 husbandspouseAadharNo: _fatherSpouseAadhaarController.text,
