@@ -232,8 +232,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   ),
                 ),
                 SizedBox(height: 20.h),
-
-                // Search results:
                 if (searchResults.isNotEmpty)
                   ListView.builder(
                     shrinkWrap: true,

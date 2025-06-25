@@ -115,7 +115,6 @@ class _AllConsumerPageState extends State<AllConsumerPage> {
     }
     String consumerAgo = timeAgo(consumer.creationTD.toDate());
     openBottomSheet(
-      context: context,
       minChildSize: 0.36,
       initialChildSize: 0.36,
       maxChildSize: .5,
@@ -339,7 +338,6 @@ class _AllConsumerPageState extends State<AllConsumerPage> {
 
   void _onMenuTap({required String totalConsumers}) {
     openBottomSheet(
-      context: context,
       minChildSize: 0.21,
       initialChildSize: 0.21,
       maxChildSize: .9,

@@ -931,7 +931,6 @@ class _HomePageState extends State<HomePage> {
 
     final totalConsumers = context.read<DeliveryCubit>().state.consumers.length;
     openBottomSheet(
-      context: context,
       minChildSize: alreadyBusiness ? 0.53 : 0.22,
       initialChildSize: alreadyBusiness ? 0.53 : 0.22,
       maxChildSize: .9,
@@ -1029,7 +1028,6 @@ class _HomePageState extends State<HomePage> {
     required BusinessModel? myBusiness,
   }) {
     openBottomSheet(
-      context: context,
       child: Column(
         children: [
           SizedBox(height: 10.h),
@@ -1205,7 +1203,6 @@ class _HomePageState extends State<HomePage> {
     openBottomSheet(
       minChildSize: 0.28,
       initialChildSize: 0.28,
-      context: context,
       child: Column(
         children: [
           bottomSheetTile(

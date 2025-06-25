@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, prefer_final_fields
 
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:gas/core/utils/location.dart';
-import 'package:gas/core/utils/location_picker.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/delivery/data/models/consumer_model.dart';
 import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
@@ -106,7 +104,6 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                   suffixIcon: Iconsax.arrow_down_1,
                   onTap: () async {
                     openBottomSheet(
-                      context: context,
                       minChildSize: 0.22,
                       initialChildSize: 0.22,
                       child: Column(
@@ -150,22 +147,16 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                   controller: _addressController,
                   suffixIcon: Iconsax.arrow_down_1,
                   onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const LocationPickerPage(),
-                      ),
-                            )
-                            as UserLocationModel?;
-
-                    if (result != null) {
-                      _addressController.text =
-                          "${result.area}, ${result.city}";
+                    final address = await pickAddress(
+                      context: context,
+                      initialAddress: _address,
+                    );
+                    if (address != null) {
                       setState(() {
-                        _address = result;
+                        _address = address;
+                        _addressController.text = address.city;
                       });
                     }
-                    log("Address: ${_address.city}");
                   },
                 ),
                 SizedBox(height: 10.h),
@@ -351,4 +342,6 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
       ],
     );
   }
+  
+  
 }

@@ -468,7 +468,6 @@ void _onMenuTap({
   }
   String consumerAgo = timeAgo(consumer.creationTD.toDate());
   openBottomSheet(
-    context: context,
     minChildSize: 0.44,
     initialChildSize: 0.44,
     maxChildSize: .5,

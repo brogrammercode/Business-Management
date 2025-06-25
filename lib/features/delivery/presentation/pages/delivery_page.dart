@@ -194,7 +194,6 @@ class DeliveryPage extends StatelessWidget {
   }) {
     final deliveryAgo = timeAgo(delivery.deliveryTD.toDate());
     openBottomSheet(
-      context: context,
       minChildSize: 0.28,
       initialChildSize: 0.28,
       maxChildSize: .5,
@@ -254,7 +253,6 @@ class DeliveryPage extends StatelessWidget {
   }) {
     final deliveryAgo = timeAgo(delivery.deliveryTD.toDate());
     openBottomSheet(
-      context: context,
       minChildSize: 0.28,
       initialChildSize: 0.28,
       maxChildSize: .5,
@@ -325,7 +323,6 @@ class DeliveryPage extends StatelessWidget {
       consumerAgo = timeAgo(recentConsumer.creationTD.toDate());
     }
     openBottomSheet(
-      context: context,
       minChildSize: 0.28,
       initialChildSize: 0.28,
       maxChildSize: .5,
