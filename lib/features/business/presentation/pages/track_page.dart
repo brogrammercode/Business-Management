@@ -10,6 +10,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
+import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/delivery/data/models/consumer_model.dart';
 import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
@@ -221,7 +222,7 @@ class _TrackPageState extends State<TrackPage> {
                       AppColors.blue900,
                     ],
                     strokeWidth: 3.0,
-                    pattern: StrokePattern.dashed(segments: [10, 5])
+                    pattern: StrokePattern.dashed(segments: [10, 5]),
                   ),
                 ]
               : <Polyline<Object>>[],
@@ -247,7 +248,102 @@ class _TrackPageState extends State<TrackPage> {
                 ),
           ],
         ),
+        _infoBox(
+          image: target.avatar,
+          location: target.address,
+          name: target.name,
+        ),
+        _backButton(),
       ],
+    );
+  }
+
+  Positioned _backButton() {
+    return Positioned(
+      top: 35.h,
+      left: 5.w,
+      child: IconButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          shadowColor: Colors.black.withOpacity(.2),
+          elevation: 5,
+        ),
+        icon: Icon(Iconsax.arrow_left, color: Colors.black),
+        onPressed: () => Navigator.pop(context),
+      ),
+    );
+  }
+
+  Positioned _infoBox({
+    required String image,
+    required UserLocationModel location,
+    required String name,
+  }) {
+    final timeAgoStr = timeAgo(location.updateTD.toDate());
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20.r,
+              spreadRadius: 1,
+              offset: const Offset(0, 1),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 25.r,
+              backgroundColor: AppColors.blue400,
+              backgroundImage: NetworkImage(image),
+            ),
+            SizedBox(width: 20.w),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+
+                  Text(
+                    "${location.area}, ${location.city}, ${location.state}",
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    "Updated: $timeAgoStr",
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -277,10 +373,7 @@ class _TrackPageState extends State<TrackPage> {
               child: Container(
                 height: 50.h,
                 width: 50.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: color),
                 padding: EdgeInsets.all(4.w),
                 child: CircleAvatar(
                   radius: 30.r,
