@@ -139,10 +139,13 @@ class DeliveryCubit extends Cubit<DeliveryState> {
     }
   }
 
-  Future<bool> updateDelivery({required DeliveryModel delivery}) async {
+  Future<bool> updateDelivery({
+    required DeliveryModel delivery,
+    File? image,
+  }) async {
     try {
       emit(state.copyWith(updateDeliveryStatus: StateStatus.loading));
-      await _repo.updateDelivery(delivery: delivery);
+      await _repo.updateDelivery(delivery: delivery, image: image);
       emit(state.copyWith(updateDeliveryStatus: StateStatus.success));
       return true;
     } catch (e) {

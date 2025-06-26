@@ -208,7 +208,11 @@ class DeliveryPage extends StatelessWidget {
             subtitle: "Delivery initiated $deliveryAgo ago",
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, AppRoutes.finishDelivery);
+              Navigator.pushNamed(
+                context,
+                AppRoutes.finishDelivery,
+                arguments: {"delivery": delivery},
+              );
             },
           ),
           bottomSheetTile(

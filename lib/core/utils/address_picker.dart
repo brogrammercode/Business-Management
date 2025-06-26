@@ -92,74 +92,7 @@ class _AddressPickerState extends State<AddressPicker> {
                   context,
                 ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
               ),
-              TextButton(
-                onPressed: status == StateStatus.loading
-                    ? null
-                    : status == StateStatus.success
-                    ? () {
-                        Navigator.pop(
-                          context,
-                          UserLocationModel(
-                            pincode: pincodeController.text.trim(),
-                            area: areaController.text.trim(),
-                            locality: areaController.text.trim(),
-                            city: cityController.text.trim(),
-                            state: stateController.text.trim(),
-                            country: countryController.text.trim(),
-                            continent: "Asia",
-                            geopoint: geopoint ?? GeoPoint(0, 0),
-                          ),
-                        );
-                      }
-                    : () async {
-                        setState(() {
-                          status = StateStatus.loading;
-                          error = null;
-                        });
-
-                        final result = await fetchAddress(
-                          pincodeController.text.trim(),
-                        );
-
-                        if (!mounted) return;
-
-                        if (result.containsKey('error')) {
-                          setState(() {
-                            status = StateStatus.failure;
-                            error = result['error'];
-                            areas.clear();
-                          });
-                        } else {
-                          setState(() {
-                            status = StateStatus.success;
-                            areas = List<String>.from(
-                              result['postOffices'].map(
-                                (office) => office['Name'] as String,
-                              ),
-                            );
-                            areaController.text = areas[0];
-                            cityController.text = result['city'] ?? '';
-                            stateController.text = result['state'] ?? '';
-                            countryController.text = result['country'] ?? '';
-                            geopoint = result['geopoint'] as GeoPoint?;
-                          });
-
-                          log("${geopoint?.latitude} ${geopoint?.longitude}");
-                        }
-                      },
-
-                child: Text(
-                  status == StateStatus.loading
-                      ? "Searching ..."
-                      : status == StateStatus.success
-                      ? "Save"
-                      : "Search",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              ),
+              _saveButton(context),
             ],
           ),
         ),
@@ -220,6 +153,75 @@ class _AddressPickerState extends State<AddressPicker> {
           SizedBox(height: 40.h),
         ],
       ],
+    );
+  }
+
+  TextButton _saveButton(BuildContext context) {
+    return TextButton(
+      onPressed: status == StateStatus.loading
+          ? null
+          : status == StateStatus.success
+          ? () {
+              Navigator.pop(
+                context,
+                UserLocationModel(
+                  pincode: pincodeController.text.trim(),
+                  area: areaController.text.trim(),
+                  locality: areaController.text.trim(),
+                  city: cityController.text.trim(),
+                  state: stateController.text.trim(),
+                  country: countryController.text.trim(),
+                  continent: "Asia",
+                  geopoint: geopoint ?? GeoPoint(0, 0),
+                ),
+              );
+            }
+          : () async {
+              setState(() {
+                status = StateStatus.loading;
+                error = null;
+              });
+
+              final result = await fetchAddress(pincodeController.text.trim());
+
+              if (!mounted) return;
+
+              if (result.containsKey('error')) {
+                setState(() {
+                  status = StateStatus.failure;
+                  error = result['error'];
+                  areas.clear();
+                });
+              } else {
+                setState(() {
+                  status = StateStatus.success;
+                  areas = List<String>.from(
+                    result['postOffices'].map(
+                      (office) => office['Name'] as String,
+                    ),
+                  );
+                  areaController.text = areas[0];
+                  cityController.text = result['city'] ?? '';
+                  stateController.text = result['state'] ?? '';
+                  countryController.text = result['country'] ?? '';
+                  geopoint = result['geopoint'] as GeoPoint?;
+                });
+
+                log("${geopoint?.latitude} ${geopoint?.longitude}");
+              }
+            },
+
+      child: Text(
+        status == StateStatus.loading
+            ? "Searching ..."
+            : status == StateStatus.success
+            ? "Save"
+            : "Search",
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
     );
   }
 }

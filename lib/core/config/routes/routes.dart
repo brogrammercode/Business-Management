@@ -64,7 +64,10 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (_) => ConsumerDetailPage(consumer: args?['consumer']));
       case finishDelivery:
-        return MaterialPageRoute(builder: (_) => const FinishDeliveryPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => FinishDeliveryPage(delivery: args?["delivery"]),
+        );
 
       // employee
       case employeeTrack:

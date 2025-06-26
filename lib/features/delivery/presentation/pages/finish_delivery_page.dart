@@ -4,14 +4,23 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
+import 'package:gas/core/utils/location.dart';
+import 'package:gas/features/delivery/data/models/delivery_model.dart';
+import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
+import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 
 class FinishDeliveryPage extends StatefulWidget {
-  const FinishDeliveryPage({super.key});
+  final DeliveryModel delivery;
+  const FinishDeliveryPage({super.key, required this.delivery});
 
   @override
   State<FinishDeliveryPage> createState() => _FinishDeliveryPageState();
@@ -25,6 +34,12 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
   List<CameraDescription> _cameras = [];
   int _selectedCameraIndex = 0;
   bool _showCamera = true;
+
+  TextEditingController consumerNoController = TextEditingController();
+  TextEditingController paymentMethodController = TextEditingController();
+  TextEditingController moneyPaidController = TextEditingController();
+
+  List<String> paymentMethods = ["Cash", "UPI"];
 
   @override
   void initState() {
@@ -81,34 +96,100 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(
-            context: context,
-            onBackTap: () => Navigator.pop(context),
-            onMenuTap: () {
-              showSnack(text: "Image saved to the gallery");
-            },
-            title: "Finish Delivery",
+    return BlocConsumer<DeliveryCubit, DeliveryState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        final delivery = state.deliveries.firstWhere(
+          (delivery) => delivery.id == widget.delivery.id,
+          orElse: () => widget.delivery,
+        );
+        final consumer = state.consumers.firstWhere(
+          (consumer) => consumer.id == delivery.consumerID,
+        );
+
+        consumerNoController.text = consumer.consumerNo;
+        moneyPaidController.text = delivery.fees.toString();
+
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(
+                context: context,
+                onBackTap: () => Navigator.pop(context),
+                onSaveTap: () async => await _finishDelivery(context, delivery),
+                title: "Finish Delivery",
+              ),
+              _camera(
+                consumerImage: consumer.image,
+                consumerName: consumer.name,
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+              _heading(
+                context: context,
+                title: "Delivery Details",
+                subtitle: "Open QR Code",
+                onTap: () async {},
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 10.h)),
+              _fields(
+                consumerNoController: consumerNoController,
+                paymentMethodController: paymentMethodController,
+                moneyPaidController: moneyPaidController,
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 20.h)),
+            ],
           ),
-          _camera(),
-          SliverToBoxAdapter(child: SizedBox(height: 20.h)),
-          _heading(
-            context: context,
-            title: "Delivery Details",
-            subtitle: "Open QR Code",
-            onTap: () {},
-          ),
-          SliverToBoxAdapter(child: SizedBox(height: 10.h)),
-          _fields(),
-          SliverToBoxAdapter(child: SizedBox(height: 20.h)),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  SliverToBoxAdapter _fields() {
+  Future<void> _finishDelivery(
+    BuildContext context,
+    DeliveryModel delivery,
+  ) async {
+    showSnack(
+      text: "Finishing Delivery...",
+      backgroundColor: AppColors.blue500,
+      sticky: true,
+    );
+    final td = Timestamp.now();
+    final lastLocation =
+        context.read<HomeCubit>().state.lastLocation.isNotEmpty == true
+        ? context.read<HomeCubit>().state.lastLocation.first
+        : UserLocationModel();
+
+    final result = await context.read<DeliveryCubit>().updateDelivery(
+      delivery: delivery.copyWith(
+        employeeID: FirebaseAuth.instance.currentUser?.uid ?? "",
+        deliveryLocation: lastLocation,
+        paid: num.parse(moneyPaidController.text),
+        paymentMethod: paymentMethodController.text,
+        deliveryTD: td,
+        status: "completed",
+      ),
+      image: imageFile,
+    );
+
+    if (result) {
+      Navigator.of(context).pop();
+      showSnack(
+        text: "Delivery Finished Successfully",
+        backgroundColor: AppColors.green500,
+      );
+    } else {
+      showSnack(
+        text: "Failed to finish delivery",
+        backgroundColor: AppColors.red500,
+      );
+    }
+  }
+
+  SliverToBoxAdapter _fields({
+    required TextEditingController consumerNoController,
+    required TextEditingController paymentMethodController,
+    required TextEditingController moneyPaidController,
+  }) {
     return SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +199,7 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
             margin: EdgeInsets.symmetric(horizontal: 15.w),
             labelText: "Consumer Number",
             hintText: "e.g. Xyz Kumar",
-            controller: TextEditingController(text: "1234567890"),
+            controller: consumerNoController,
           ),
           SizedBox(height: 10.h),
           Row(
@@ -128,7 +209,42 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
                   margin: EdgeInsets.only(left: 15.w, right: 10.w),
                   labelText: "Payment Method",
                   hintText: "e.g. Cash",
-                  controller: TextEditingController(text: "Cash"),
+                  suffixIcon: Iconsax.arrow_down_1,
+                  controller: paymentMethodController,
+                  onTap: () async {
+                    final paymentMethod = await openBottomSheet<String?>(
+                      child: Column(
+                        children: paymentMethods
+                            .map(
+                              (e) => InkWell(
+                                onTap: () {
+                                  Navigator.pop(context, e);
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10.w,
+                                    vertical: 15.h,
+                                  ),
+                                  child: Text(
+                                    e,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    );
+                    if (paymentMethod != null) {
+                      setState(() {
+                        paymentMethodController.text = paymentMethod;
+                      });
+                    }
+                  },
                 ),
               ),
               Expanded(
@@ -136,7 +252,7 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
                   margin: EdgeInsets.only(right: 15.w),
                   labelText: "Money Paid",
                   hintText: "e.g. 100",
-                  controller: TextEditingController(),
+                  controller: moneyPaidController,
                 ),
               ),
             ],
@@ -197,7 +313,10 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
     );
   }
 
-  SliverToBoxAdapter _camera() {
+  SliverToBoxAdapter _camera({
+    required String consumerImage,
+    required String consumerName,
+  }) {
     return SliverToBoxAdapter(
       child: Stack(
         children: [
@@ -285,10 +404,9 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
             left: 30.w,
             child: _deliveryTile(
               context: context,
-              image:
-                  "https://images.unsplash.com/photo-1529258297641-785a413968af?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGRwfGVufDB8fDB8fHww",
-              title: "Mark Snowman",
-              subtitle: "12 May, 12:45 PM",
+              image: consumerImage,
+              title: consumerName,
+              subtitle: DateFormat("dd MMM, hh:mm a").format(DateTime.now()),
             ),
           ),
         ],
@@ -398,7 +516,7 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
   Widget _buildSliverAppBar({
     required BuildContext context,
     required void Function() onBackTap,
-    required void Function() onMenuTap,
+    required void Function() onSaveTap,
     required String title,
   }) {
     return SliverAppBar(
@@ -409,7 +527,7 @@ class _FinishDeliveryPageState extends State<FinishDeliveryPage> {
       pinned: true,
       actions: [
         TextButton(
-          onPressed: () {},
+          onPressed: onSaveTap,
           child: const Text(
             "Save",
             style: TextStyle(fontWeight: FontWeight.bold),
