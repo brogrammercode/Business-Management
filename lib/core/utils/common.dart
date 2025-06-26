@@ -743,6 +743,14 @@ Future<List<LatLng>> fetchRoute({
   required LatLng secondLatLng,
   String? lastFetchedRoute,
 }) async {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    showSnack(
+      text: "Getting Route...",
+      backgroundColor: AppColors.blue500,
+      sticky: true,
+    );
+  });
+
   final String osrmUrl =
       "https://router.project-osrm.org/route/v1/driving/${secondLatLng.longitude},${secondLatLng.latitude};${firstLatLng.longitude},${firstLatLng.latitude}?overview=full&geometries=geojson";
 
@@ -761,20 +769,40 @@ Future<List<LatLng>> fetchRoute({
 
       final List<dynamic> coordinates =
           data["routes"][0]["geometry"]["coordinates"];
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showSnack(
+          text: "Route Updated Successfully",
+          backgroundColor: AppColors.green500,
+        );
+      });
+
       return coordinates
-          .map<LatLng>(
-            (coord) => LatLng(coord[1] as double, coord[0] as double),
-          )
+          .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
           .toList();
     } else {
       debugPrint("Failed to fetch route: ${response.statusCode}");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showSnack(
+          text: "Failed to get route",
+          backgroundColor: AppColors.red500,
+        );
+      });
+
       return [];
     }
   } catch (e) {
     debugPrint("Error fetching route: $e");
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showSnack(text: "Failed to get route", backgroundColor: AppColors.red500);
+    });
+
     return [];
   }
 }
+
 
 Future<void> call({
   required BuildContext context,

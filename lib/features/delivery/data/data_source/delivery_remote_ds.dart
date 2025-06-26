@@ -20,7 +20,10 @@ class DeliveryRemoteDs implements DeliveryRepo {
       String imageUrl = consumer.image;
       if (image != null) {
         imageUrl = await uploadImage(
-            id: consumer.id, image: image, storageChild: 'consumers');
+          id: consumer.id,
+          image: image,
+          storageChild: 'Consumers',
+        );
       }
 
       final updated = consumer.copyWith(image: imageUrl);
@@ -40,7 +43,10 @@ class DeliveryRemoteDs implements DeliveryRepo {
       String imageUrl = consumer.image;
       if (image != null) {
         imageUrl = await uploadImage(
-            id: consumer.id, image: image, storageChild: 'consumers');
+          id: consumer.id,
+          image: image,
+          storageChild: 'Consumers',
+        );
       }
 
       final updated = consumer.copyWith(image: imageUrl);
@@ -69,7 +75,10 @@ class DeliveryRemoteDs implements DeliveryRepo {
       String imageUrl = delivery.deliveryImage;
       if (image != null) {
         imageUrl = await uploadImage(
-            id: delivery.id, image: image, storageChild: 'deliveries');
+          id: delivery.id,
+          image: image,
+          storageChild: 'Deliveries',
+        );
       }
 
       final updated = delivery.copyWith(deliveryImage: imageUrl);

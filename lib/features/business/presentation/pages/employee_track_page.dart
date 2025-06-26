@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gas/core/config/theme/colors.dart';
+import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
@@ -60,15 +60,15 @@ class EmployeeTrackPage extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: GestureDetector(
                       onTap: () {
-                        showSnack(
-                          text: "Will be available in next update",
-                          backgroundColor: AppColors.red500,
-                        );
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   AppRoutes.trackPage,
-                        //   arguments: {"employeeID": selectedEmployeeDetail.id},
+                        // showSnack(
+                        //   text: "Will be available in next update",
+                        //   backgroundColor: AppColors.red500,
                         // );
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.trackPage,
+                          arguments: {"employeeID": selectedEmployeeDetail.id},
+                        );
                       },
                       child: CachedNetworkImage(
                         height: 300.h,

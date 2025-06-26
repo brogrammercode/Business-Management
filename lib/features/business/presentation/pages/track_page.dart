@@ -8,8 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:gas/features/delivery/data/models/consumer_model.dart';
+import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
 import 'package:gas/features/employee/data/models/employee_model.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:latlong2/latlong.dart';
@@ -31,7 +34,7 @@ class _TrackPageState extends State<TrackPage> {
   @override
   void initState() {
     super.initState();
-    // _fetchRouteData();
+    _fetchRouteData();
   }
 
   Future<void> _fetchRouteData() async {
@@ -147,7 +150,16 @@ class _TrackPageState extends State<TrackPage> {
     );
   }
 
-  FlutterMap _map(EmployeeModel target, EmployeeModel me) {
+  Widget _map(EmployeeModel target, EmployeeModel me) {
+    if (target.address.geopoint.latitude == 0 &&
+        target.address.geopoint.longitude == 0) {
+      return const Center(child: Text("Target location not available"));
+    }
+    if (me.address.geopoint.latitude == 0 &&
+        me.address.geopoint.longitude == 0) {
+      return const Center(child: Text("Your location not available"));
+    }
+
     final LatLng targetLatLng = LatLng(
       target.address.geopoint.latitude,
       target.address.geopoint.longitude,
@@ -158,37 +170,88 @@ class _TrackPageState extends State<TrackPage> {
       me.address.geopoint.longitude,
     );
 
+    // Fetch consumers from deliveries
+    final deliveryCubitState = context.read<DeliveryCubit>().state;
+    final pendingDeliveries = deliveryCubitState.deliveries.where(
+      (e) => e.status == "initiated",
+    );
+    final pendingConsumerIDs = pendingDeliveries
+        .map((e) => e.consumerID)
+        .toSet();
+    final List<ConsumerModel> consumers = deliveryCubitState.consumers
+        .where((e) => pendingConsumerIDs.contains(e.id))
+        .toList();
+
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        initialCameraFit: CameraFit.bounds(
-          bounds: LatLngBounds.fromPoints([targetLatLng, meLatLng]),
-          padding: EdgeInsets.all(50.r),
-        ),
+        initialCenter: targetLatLng,
+        initialZoom: 15,
+        // initialCameraFit: CameraFit.bounds(
+        //   bounds: LatLngBounds.fromPoints([
+        //     targetLatLng,
+        //     meLatLng,
+        //     ...consumers.map(
+        //       (e) => LatLng(
+        //         e.address.geopoint.latitude,
+        //         e.address.geopoint.longitude,
+        //       ),
+        //     ),
+        //   ]),
+        //   padding: EdgeInsets.all(50.r),
+        // ),
       ),
       children: [
         TileLayer(
+          // urlTemplate:
+          //     "https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=4796c8bcd90d4d4aa12b29a5d7bbcf17",
           urlTemplate:
-              "https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=4796c8bcd90d4d4aa12b29a5d7bbcf17",
+              "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
           userAgentPackageName: "com.example.gas",
+          retinaMode: true,
         ),
-        PolylineLayer(
-          polylines: [
-            Polyline(
-              points: routeCoordinates,
-              color: Colors.black.withOpacity(1),
-              strokeWidth: 3.0,
-            ),
-          ],
+        PolylineLayer<Object>(
+          polylines: routeCoordinates.isNotEmpty
+              ? [
+                  Polyline<Object>(
+                    points: routeCoordinates,
+                    gradientColors: [
+                      AppColors.blue100,
+                      AppColors.blue400,
+                      AppColors.blue900,
+                    ],
+                    strokeWidth: 3.0,
+                    pattern: StrokePattern.dashed(segments: [10, 5])
+                  ),
+                ]
+              : <Polyline<Object>>[],
         ),
         MarkerLayer(
-          markers: [_marker(meLatLng, me), _marker(targetLatLng, target)],
+          markers: [
+            _marker(targetLatLng, target.avatar, color: AppColors.blue400),
+            _marker(meLatLng, me.avatar, color: AppColors.blue900),
+            ...consumers
+                .where(
+                  (c) =>
+                      c.address.geopoint.latitude != 0 &&
+                      c.address.geopoint.longitude != 0,
+                )
+                .map(
+                  (c) => _marker(
+                    LatLng(
+                      c.address.geopoint.latitude,
+                      c.address.geopoint.longitude,
+                    ),
+                    c.image,
+                  ),
+                ),
+          ],
         ),
       ],
     );
   }
 
-  Marker _marker(LatLng location, EmployeeModel user) {
+  Marker _marker(LatLng location, String avatar, {Color color = Colors.white}) {
     return Marker(
       point: location,
       width: 70.r,
@@ -208,21 +271,21 @@ class _TrackPageState extends State<TrackPage> {
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
-            Icon(Iconsax.location5, color: Colors.white, size: 70.r),
+            Icon(Iconsax.location5, color: color, size: 70.r),
             Positioned(
               top: 5.r,
               child: Container(
                 height: 50.h,
                 width: 50.h,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: color,
                 ),
                 padding: EdgeInsets.all(4.w),
                 child: CircleAvatar(
                   radius: 30.r,
-                  backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(user.avatar),
+                  backgroundColor: color,
+                  backgroundImage: NetworkImage(avatar),
                 ),
               ),
             ),
