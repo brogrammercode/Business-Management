@@ -45,7 +45,6 @@ dependencies:
   firebase_storage: ^12.4.7
   flutter_bloc: ^9.1.1
   flutter_image_compress: ^2.4.0
-  flutter_launcher_icons: ^0.14.4
   flutter_map: ^8.1.1
   flutter_screenutil: ^5.9.3
   geocoding: ^4.0.0
@@ -67,12 +66,14 @@ dependencies:
   flutter_lints: ^6.0.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
 
 flutter_launcher_icons:
   android: true
   ios: true
+  adaptive_icon_background: "#ffffff"
   image_path: "assets/images/biZtrack.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
