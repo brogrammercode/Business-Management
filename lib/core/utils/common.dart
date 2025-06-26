@@ -24,171 +24,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
-Future<UserLocationModel?> pickAddress({
-  required BuildContext context,
-  required UserLocationModel initialAddress,
-}) async {
-  final pincodeController = TextEditingController(text: initialAddress.pincode);
-  List<String> areas = [];
-  String? selectedArea;
-  String city = '';
-  String state = '';
-  bool loading = false;
-  String? error;
-
-  final _address = await openBottomSheet<UserLocationModel>(
-    child: SizedBox(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Select Address",
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  // final result = await showDialog<UserLocationModel>(
-  //   context: context,
-
-  //   builder: (context) {
-  //     return StatefulBuilder(
-  //       builder: (context, setState) {
-  //         Future<void> fetchAddress(String pincode) async {
-  //           setState(() {
-  //             loading = true;
-  //             error = null;
-  //             areas = [];
-  //             selectedArea = null;
-  //             city = '';
-  //             state = '';
-  //           });
-
-  //           final uri = Uri.parse(
-  //             'https://api.postalpincode.in/pincode/$pincode',
-  //           );
-  //           final response = await http.get(uri);
-
-  //           setState(() {
-  //             loading = false;
-  //           });
-
-  //           if (response.statusCode == 200) {
-  //             final data = jsonDecode(response.body);
-  //             final postOffices = data[0]['PostOffice'];
-  //             if (postOffices != null && postOffices is List) {
-  //               setState(() {
-  //                 areas = postOffices
-  //                     .map<String>((e) => e['Name'] as String)
-  //                     .toList();
-  //                 city = postOffices[0]['District'];
-  //                 state = postOffices[0]['State'];
-  //               });
-  //             } else {
-  //               setState(() {
-  //                 error = 'No areas found for this pincode.';
-  //               });
-  //             }
-  //           } else {
-  //             setState(() {
-  //               error = 'Failed to fetch address.';
-  //             });
-  //           }
-  //         }
-
-  //         return AlertDialog(
-  //           title: Text('Pick Address'),
-  //           content: SingleChildScrollView(
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 TextField(
-  //                   controller: pincodeController,
-  //                   keyboardType: TextInputType.number,
-  //                   decoration: InputDecoration(
-  //                     labelText: 'Pincode',
-  //                     suffixIcon: IconButton(
-  //                       icon: Icon(Icons.search),
-  //                       onPressed: () =>
-  //                           fetchAddress(pincodeController.text.trim()),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 if (loading)
-  //                   Padding(
-  //                     padding: EdgeInsets.all(8),
-  //                     child: CircularProgressIndicator(),
-  //                   ),
-  //                 if (error != null)
-  //                   Padding(
-  //                     padding: EdgeInsets.all(8),
-  //                     child: Text(error!, style: TextStyle(color: Colors.red)),
-  //                   ),
-  //                 if (areas.isNotEmpty)
-  //                   DropdownButton<String>(
-  //                     value: selectedArea,
-  //                     hint: Text('Select Area'),
-  //                     isExpanded: true,
-  //                     items: areas
-  //                         .map(
-  //                           (area) => DropdownMenuItem(
-  //                             value: area,
-  //                             child: Text(area),
-  //                           ),
-  //                         )
-  //                         .toList(),
-  //                     onChanged: (value) =>
-  //                         setState(() => selectedArea = value),
-  //                   ),
-  //                 if (city.isNotEmpty) Text('City: $city'),
-  //                 if (state.isNotEmpty) Text('State: $state'),
-  //               ],
-  //             ),
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               child: Text('Cancel'),
-  //             ),
-  //             ElevatedButton(
-  //               onPressed: () {
-  //                 if (selectedArea != null &&
-  //                     city.isNotEmpty &&
-  //                     state.isNotEmpty) {
-  //                   Navigator.pop(
-  //                     context,
-  //                     UserLocationModel(
-  //                       area: selectedArea!,
-  //                       city: city,
-  //                       state: state,
-  //                       pincode: pincodeController.text.trim(),
-  //                       country: 'India',
-  //                       continent: 'Asia',
-  //                       locality: selectedArea!,
-  //                       geopoint: GeoPoint(
-  //                         initialAddress.geopoint.latitude,
-  //                         initialAddress.geopoint.longitude,
-  //                       ),
-  //                     ),
-  //                   );
-  //                 }
-  //               },
-  //               child: Text('Save'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   },
-  // );
-  return _address;
-}
-
 String timeAgo(DateTime dateTime) {
   final Duration diff = DateTime.now().difference(dateTime);
 
@@ -964,7 +799,7 @@ Future<T?> openBottomSheet<T>({
   double maxChildSize = 0.9,
 }) async {
   final BuildContext context = navigatorKey.currentContext!;
-  showModalBottomSheet(
+  return await showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
@@ -1007,7 +842,6 @@ Future<T?> openBottomSheet<T>({
       );
     },
   );
-  return null;
 }
 
 InkWell bottomSheetTile({

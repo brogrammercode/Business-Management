@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/config/theme/colors.dart';
+import 'package:gas/core/utils/address_picker.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
@@ -154,7 +155,8 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
                     if (address != null) {
                       setState(() {
                         _address = address;
-                        _addressController.text = address.city;
+                        _addressController.text =
+                            "${address.area}, ${address.city}, ${address.state}";
                       });
                     }
                   },
