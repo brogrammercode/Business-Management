@@ -194,6 +194,10 @@ class _HomePageState extends State<HomePage> {
             _admins(myBusinessParams: myBusiness),
             SliverToBoxAdapter(child: SizedBox(height: 10.h)),
           ],
+          if (myBusiness.requests.isNotEmpty) ...[
+            _requests(myBusinessParams: myBusiness),
+            SliverToBoxAdapter(child: SizedBox(height: 10.h)),
+          ],
           _owners(myBusinessParams: myBusiness),
           SliverToBoxAdapter(child: SizedBox(height: 20.h)),
           _heading(
@@ -741,6 +745,84 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  SliverToBoxAdapter _requests({required BusinessParams myBusinessParams}) {
+    final requests = myBusinessParams.requests;
+    return SliverToBoxAdapter(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(right: 10.w),
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(requests.length, (i) {
+            final request = requests[i].employee;
+            return Container(
+              width: 350.w,
+              margin: EdgeInsets.only(left: 10.w),
+              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+              decoration: BoxDecoration(
+                color: AppColors.black500,
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              child: Row(
+                children: [
+                  ClipOval(
+                    child: Image.network(
+                      height: 50.r,
+                      width: 50.r,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error);
+                      },
+                      request.avatar,
+                    ),
+                  ),
+                  SizedBox(width: 15.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          request.name,
+                          style: Theme.of(context).textTheme.bodyMedium!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                        ),
+                        Text(
+                          "Accept the request to add\nas employee",
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall!
+                              .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white.withOpacity(.6),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 15.w),
+                  IconButton(
+                    onPressed: () => _onRequestTap(
+                      employee: request,
+                      business: myBusinessParams.business,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.black300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    icon: const Icon(Iconsax.menu_1, color: Colors.white),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
   SliverToBoxAdapter _owners({required BusinessParams myBusinessParams}) {
     final owners = myBusinessParams.owners;
     return SliverToBoxAdapter(
@@ -1243,6 +1325,96 @@ class _HomePageState extends State<HomePage> {
                 text: "Will be available in next update",
                 backgroundColor: AppColors.red500,
               );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onRequestTap({
+    required EmployeeModel employee,
+    required BusinessModel business,
+  }) {
+    openBottomSheet(
+      minChildSize: 0.28,
+      initialChildSize: 0.28,
+      child: Column(
+        children: [
+          bottomSheetTile(
+            context: context,
+            icon: CupertinoIcons.check_mark,
+            title: "Accept Request",
+            subtitle: "Total requests: ${business.requests.length}",
+            actionIcon: Iconsax.arrow_right_1,
+            onTap: () async {
+              Navigator.pop(context);
+
+              showSnack(
+                text: "Accepting request from ${employee.name}",
+                backgroundColor: AppColors.blue500,
+              );
+
+              final updatedRequests = business.requests
+                  .where((id) => id != employee.id)
+                  .toList();
+
+              final updatedEmployees = [...business.employees, employee.id];
+
+              final success = await context
+                  .read<BusinessCubit>()
+                  .updateBusiness(
+                    business: business.copyWith(
+                      requests: updatedRequests,
+                      employees: updatedEmployees,
+                    ),
+                    avatar: null,
+                  );
+
+              if (success && mounted) {
+                showSnack(text: "Request accepted from ${employee.name}");
+              }
+            },
+          ),
+          bottomSheetTile(
+            context: context,
+            icon: Iconsax.tag_user,
+            title: "View Profile",
+            subtitle: "View employee profile",
+            onTap: () {
+              Navigator.pop(context);
+              showSnack(
+                text: "Will be available in next update",
+                backgroundColor: AppColors.red500,
+              );
+            },
+          ),
+          bottomSheetTile(
+            context: context,
+            icon: Iconsax.user_minus,
+            title: "Reject Request",
+            subtitle: "Rejecting the request of this employee",
+            onTap: () async {
+              Navigator.pop(context);
+              showSnack(
+                text: "Rejecting request from ${employee.name}",
+                backgroundColor: AppColors.blue500,
+              );
+
+              final updatedRequests = business.requests
+                  .where((id) => id != employee.id)
+                  .toList();
+
+              final success = await context
+                  .read<BusinessCubit>()
+                  .updateBusiness(
+                    business: business.copyWith(requests: updatedRequests),
+                    avatar: null,
+                  );
+
+              if (success && mounted) {
+                showSnack(text: "Request rejected from ${employee.name}");
+              }
             },
           ),
         ],
