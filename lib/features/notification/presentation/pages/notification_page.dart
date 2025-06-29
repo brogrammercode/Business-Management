@@ -180,7 +180,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 children: [
                   RichText(
                     text: TextSpan(
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.black.withOpacity(.6),
                       ),
@@ -247,7 +247,7 @@ class _NotificationPageState extends State<NotificationPage> {
       spans.add(
         TextSpan(
           text: matchedWord,
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),

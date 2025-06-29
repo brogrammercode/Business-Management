@@ -12,6 +12,7 @@ import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
 import 'package:gas/core/utils/error.dart';
+import 'package:gas/core/utils/local_notification.dart';
 import 'package:gas/features/business/data/models/business_model.dart';
 import 'package:gas/features/business/domain/repositories/business_repo.dart';
 import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
@@ -35,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    LocalNotification.initialize();
     context.read<HomeCubit>().initializeIsLocationEnabledListener();
     context.read<BusinessCubit>().initBusinessSubscription();
     context.read<EmployeeCubit>().initEmployeeSubscription();
@@ -134,7 +136,13 @@ class _HomePageState extends State<HomePage> {
                 text: "Will be available in next update",
                 backgroundColor: AppColors.red500,
               );
-              Navigator.pushNamed(context, AppRoutes.notificationPage);
+              // Navigator.pushNamed(context, AppRoutes.notificationPage);
+              LocalNotification().defaultNotify(
+                id: 0,
+                title: "title",
+                body: "body",
+                payload: "",
+              );
             },
             heading0: !alreadyBusiness ? "" : "Last Delivery",
             heading1: !alreadyBusiness
