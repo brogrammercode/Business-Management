@@ -10,6 +10,7 @@ import 'package:gas/features/delivery/presentation/pages/consumer_detail_page.da
 import 'package:gas/features/delivery/presentation/pages/delivery_page.dart';
 import 'package:gas/features/delivery/presentation/pages/finish_delivery_page.dart';
 import 'package:gas/features/home/presentation/pages/home_page.dart';
+import 'package:gas/features/notification/presentation/pages/notification_page.dart';
 
 class AppRoutes {
   static const String core = '/';
@@ -34,6 +35,9 @@ class AppRoutes {
   static const String employeeTrack = '/employeeTrack';
   static const String trackPage = '/trackPage';
 
+  // notification
+  static const String notificationPage = '/notificationPage';
+
   // route
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -56,7 +60,10 @@ class AppRoutes {
       case delivery:
         return MaterialPageRoute(builder: (_) => const DeliveryPage());
       case addConsumer:
-        return MaterialPageRoute(builder: (_) => const AddConsumerPage());
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => AddConsumerPage(consumer: args?['consumer']),
+        );
       case allConsumer:
         return MaterialPageRoute(builder: (_) => const AllConsumerPage());
       case consumerDetail:
@@ -80,6 +87,10 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => TrackPage(employeeID: args?['employeeID']),
         );
+
+      // notification
+      case notificationPage:
+        return MaterialPageRoute(builder: (_) => NotificationPage());
 
       // default
       default:

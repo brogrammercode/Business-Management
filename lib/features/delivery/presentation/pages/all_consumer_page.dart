@@ -52,7 +52,7 @@ class _AllConsumerPageState extends State<AllConsumerPage> {
                 onBackTap: () => Navigator.pop(context),
                 onMenuTap: () =>
                     _onMenuTap(totalConsumers: "${consumers.length}"),
-                title: "Add Deliveries",
+                title: "All Consumers",
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -195,9 +195,10 @@ class _AllConsumerPageState extends State<AllConsumerPage> {
             subtitle: "Last Edited $consumerAgo ago",
             onTap: () {
               Navigator.pop(context);
-              showSnack(
-                text: "Will be available in next update",
-                backgroundColor: AppColors.red500,
+              Navigator.pushNamed(
+                context,
+                AppRoutes.addConsumer,
+                arguments: {"consumer": consumer},
               );
             },
           ),
@@ -209,15 +210,36 @@ class _AllConsumerPageState extends State<AllConsumerPage> {
             subtitle: "Permanently delete this consumer",
             onTap: () {
               Navigator.pop(context);
-              showSnack(
-                text: "Will be available in next update",
-                backgroundColor: AppColors.red500,
-              );
+              _deleteConsumer(consumer: consumer);
             },
           ),
         ],
       ),
     );
+  }
+
+  void _deleteConsumer({required ConsumerModel consumer}) async {
+    showSnack(
+      text: "Deleting Consumer...",
+      backgroundColor: AppColors.blue500,
+      sticky: true,
+    );
+
+    final result = await context.read<DeliveryCubit>().updateConsumer(
+      consumer: consumer.copyWith(deactivate: true),
+    );
+
+    if (result) {
+      showSnack(
+        text: "Consumer Deleted Successfully",
+        backgroundColor: AppColors.green500,
+      );
+    } else {
+      showSnack(
+        text: "Failed to delete consumer",
+        backgroundColor: AppColors.red500,
+      );
+    }
   }
 
   InkWell _deliveryTile({

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:gas/core/utils/location.dart';
 import 'package:gas/features/auth/domain/repo/auth_repo.dart';
 import 'package:gas/features/employee/data/models/employee_model.dart';
@@ -68,6 +69,7 @@ class AuthRemoteDs implements AuthRepo {
         }
       }
     } catch (e) {
+      debugPrint('Failed to sign in with Google: $e');
       throw Exception('Failed to sign in with Google: $e');
     }
   }

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,8 +13,10 @@ class DeliveryRemoteDs implements DeliveryRepo {
   final String deliveryPath = 'deliveries';
 
   @override
-  Future<bool> addConsumer(
-      {required ConsumerModel consumer, File? image}) async {
+  Future<bool> addConsumer({
+    required ConsumerModel consumer,
+    File? image,
+  }) async {
     try {
       final docRef = _firestore.collection(consumerPath).doc(consumer.id);
 
@@ -35,8 +38,10 @@ class DeliveryRemoteDs implements DeliveryRepo {
   }
 
   @override
-  Future<bool> updateConsumer(
-      {required ConsumerModel consumer, File? image}) async {
+  Future<bool> updateConsumer({
+    required ConsumerModel consumer,
+    File? image,
+  }) async {
     try {
       final docRef = _firestore.collection(consumerPath).doc(consumer.id);
 
@@ -52,7 +57,8 @@ class DeliveryRemoteDs implements DeliveryRepo {
       final updated = consumer.copyWith(image: imageUrl);
       await docRef.update(updated.toJson());
       return true;
-    } catch (_) {
+    } catch (e) {
+      log("$e  ");
       return false;
     }
   }
@@ -69,8 +75,10 @@ class DeliveryRemoteDs implements DeliveryRepo {
   }
 
   @override
-  Future<bool> updateDelivery(
-      {required DeliveryModel delivery, File? image}) async {
+  Future<bool> updateDelivery({
+    required DeliveryModel delivery,
+    File? image,
+  }) async {
     try {
       String imageUrl = delivery.deliveryImage;
       if (image != null) {
@@ -95,10 +103,13 @@ class DeliveryRemoteDs implements DeliveryRepo {
     return _firestore
         .collection(consumerPath)
         .where('businessID', isEqualTo: businessID)
+        .where('deactivate', isEqualTo: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => ConsumerModel.fromJson(doc.data()))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => ConsumerModel.fromJson(doc.data()))
+              .toList(),
+        );
   }
 
   @override
@@ -106,9 +117,12 @@ class DeliveryRemoteDs implements DeliveryRepo {
     return _firestore
         .collection(deliveryPath)
         .where('businessID', isEqualTo: businessID)
+        .where('deactivate', isEqualTo: false)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => DeliveryModel.fromJson(doc.data()))
-            .toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => DeliveryModel.fromJson(doc.data()))
+              .toList(),
+        );
   }
 }

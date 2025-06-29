@@ -18,7 +18,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
 class AddConsumerPage extends StatefulWidget {
-  const AddConsumerPage({super.key});
+  final ConsumerModel? consumer;
+  const AddConsumerPage({super.key, this.consumer});
 
   @override
   State<AddConsumerPage> createState() => _AddConsumerPageState();
@@ -26,6 +27,7 @@ class AddConsumerPage extends StatefulWidget {
 
 class _AddConsumerPageState extends State<AddConsumerPage> {
   File? profileImage;
+  String? profileImageUrl;
   final _nameController = TextEditingController();
   final _fatherSpouseNameController = TextEditingController();
   final _phoneNumberController = TextEditingController(text: "+91");
@@ -42,6 +44,34 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
   final _moneyPaidController = TextEditingController();
   final _moneyDueController = TextEditingController();
   final _genderController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final toUpdate = widget.consumer != null;
+    if (toUpdate) {
+      final c = widget.consumer!;
+      _nameController.text = c.name;
+      _fatherSpouseNameController.text = c.husbandspouseName;
+      _phoneNumberController.text = c.phoneNo;
+      _dob = c.dob.toDate();
+      _dobController.text = DateFormat('dd MMMM, yyyy').format(_dob);
+      _consumerNumberController.text = c.consumerNo;
+      _address = c.address;
+      _addressController.text =
+          "${c.address.area}, ${c.address.city}, ${c.address.state}";
+      _subscriptionVoucherController.text = c.svNo;
+      _consumerAadhaarController.text = c.consumerAadharNo;
+      _fatherSpouseAadhaarController.text = c.husbandspouseAadharNo;
+      _rationCardController.text = c.rationNo;
+      _bankAccountController.text = c.bankAccountNo;
+      _moneyPaidController.text = c.paid.toString();
+      _moneyDueController.text = c.due.toString();
+      _genderController.text = c.gender;
+      profileImageUrl = c.image;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +84,7 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
               children: [
                 SizedBox(height: 20.h),
                 CommonImagePicker(
+                  networkImage: profileImageUrl,
                   onImageSelected: (file) {
                     setState(() {
                       profileImage = file;
@@ -290,38 +321,69 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
             );
             final td = Timestamp.now();
             final businessID = context.read<BusinessCubit>().state.businessID;
-            
-            final result = await context.read<DeliveryCubit>().addConsumer(
-              image: profileImage,
-              consumer: ConsumerModel(
-                id: td.millisecondsSinceEpoch.toString(),
-                name: _nameController.text,
-                image: "",
-                husbandspouseName: _fatherSpouseNameController.text,
-                phoneNo: _phoneNumberController.text,
-                gender: _genderController.text,
-                dob: Timestamp.fromDate(_dob),
-                consumerNo: _consumerNumberController.text,
-                address: _address,
-                svNo: _subscriptionVoucherController.text,
-                consumerAadharNo: _consumerAadhaarController.text,
-                husbandspouseAadharNo: _fatherSpouseAadhaarController.text,
-                rationNo: _rationCardController.text,
-                bankAccountNo: _bankAccountController.text,
-                paid:
-                    _moneyPaidController.text.isEmpty
-                        ? 0
-                        : num.parse(_moneyPaidController.text),
-                due:
-                    _moneyDueController.text.isEmpty
-                        ? 0
-                        : num.parse(_moneyDueController.text),
-                businessID: businessID,
-                creationTD: td,
-                createdBy: FirebaseAuth.instance.currentUser?.uid ?? "",
-                deactivate: false,
-              ),
-            );
+            final oldConsumer = widget.consumer;
+
+            final result = widget.consumer != null
+                ? await context.read<DeliveryCubit>().updateConsumer(
+                    image: profileImage,
+                    consumer: ConsumerModel(
+                      id: oldConsumer?.id ?? "",
+                      name: _nameController.text,
+                      image: "",
+                      husbandspouseName: _fatherSpouseNameController.text,
+                      phoneNo: _phoneNumberController.text,
+                      gender: _genderController.text,
+                      dob: Timestamp.fromDate(_dob),
+                      consumerNo: _consumerNumberController.text,
+                      address: _address,
+                      svNo: _subscriptionVoucherController.text,
+                      consumerAadharNo: _consumerAadhaarController.text,
+                      husbandspouseAadharNo:
+                          _fatherSpouseAadhaarController.text,
+                      rationNo: _rationCardController.text,
+                      bankAccountNo: _bankAccountController.text,
+                      paid: _moneyPaidController.text.isEmpty
+                          ? 0
+                          : num.parse(_moneyPaidController.text),
+                      due: _moneyDueController.text.isEmpty
+                          ? 0
+                          : num.parse(_moneyDueController.text),
+                      businessID: businessID,
+                      creationTD: oldConsumer?.creationTD ?? td,
+                      createdBy: FirebaseAuth.instance.currentUser?.uid ?? "",
+                      deactivate: false,
+                    ),
+                  )
+                : await context.read<DeliveryCubit>().addConsumer(
+                    image: profileImage,
+                    consumer: ConsumerModel(
+                      id: td.millisecondsSinceEpoch.toString(),
+                      name: _nameController.text,
+                      image: "",
+                      husbandspouseName: _fatherSpouseNameController.text,
+                      phoneNo: _phoneNumberController.text,
+                      gender: _genderController.text,
+                      dob: Timestamp.fromDate(_dob),
+                      consumerNo: _consumerNumberController.text,
+                      address: _address,
+                      svNo: _subscriptionVoucherController.text,
+                      consumerAadharNo: _consumerAadhaarController.text,
+                      husbandspouseAadharNo:
+                          _fatherSpouseAadhaarController.text,
+                      rationNo: _rationCardController.text,
+                      bankAccountNo: _bankAccountController.text,
+                      paid: _moneyPaidController.text.isEmpty
+                          ? 0
+                          : num.parse(_moneyPaidController.text),
+                      due: _moneyDueController.text.isEmpty
+                          ? 0
+                          : num.parse(_moneyDueController.text),
+                      businessID: businessID,
+                      creationTD: td,
+                      createdBy: FirebaseAuth.instance.currentUser?.uid ?? "",
+                      deactivate: false,
+                    ),
+                  );
 
             if (result) {
               Navigator.of(context).pop();
@@ -344,6 +406,4 @@ class _AddConsumerPageState extends State<AddConsumerPage> {
       ],
     );
   }
-  
-  
 }

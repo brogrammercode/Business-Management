@@ -1,0 +1,76 @@
+<head>
+  <meta name="google-signin-client_id" content="YOUR_WEB_CLIENT_ID.apps.googleusercontent.com" />
+</head>
+<body>
+  <div id="splash-screen">
+    <style>
+      html, body {
+        background: #17181a !important;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: sans-serif;
+      }
+      #splash-screen {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #17181a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      .logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 20px;
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.7; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .percent-text {
+        color: #ffffff;
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+        margin-top: 10px;
+        user-select: none;
+      }
+    </style>
+    
+    <!-- 🔽 Replace 'logo.png' with your actual logo path in /web -->
+    <img class="logo" src="../assets/images/biZtrack.png" alt="App Logo" />
+
+    <div class="percent-text" id="percent-text">0%</div>
+
+    <script>
+      let percent = 0;
+      const percentText = document.getElementById('percent-text');
+      const duration = 2000;
+      const step = 10;
+      const increment = 100 / (duration / step);
+      const interval = setInterval(() => {
+        percent += increment;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(interval);
+        }
+        percentText.textContent = Math.round(percent) + '%';
+      }, step);
+    </script>
+  </div>
+
+  <!-- 🚀 Flutter will emit this event after first frame -->
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      const splash = document.getElementById('splash-screen');
+      if (splash) splash.remove();
+    });
+  </script>
+
+  <!-- 🔄 Flutter Web bootstrap -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>

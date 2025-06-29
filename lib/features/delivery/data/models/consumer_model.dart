@@ -105,7 +105,9 @@ class ConsumerModel extends Consumer {
     return ConsumerModel(
       id: json['id'] ?? "",
       name: json['name'] ?? "",
-      image: json['image'] ?? "",
+      image: (json['image'] == null || json['image'].toString().isEmpty)
+          ? "https://images.unsplash.com/photo-1658227387870-6b7d4d6ff031?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjN8fGRlZmF1bHR8ZW58MHx8MHx8fDA%3D"
+          : json['image'],
       husbandspouseName: json['husbandspouseName'] ?? "",
       phoneNo: json['phoneNo'] ?? "",
       gender: json['gender'] ?? "",

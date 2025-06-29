@@ -239,10 +239,7 @@ class DeliveryPage extends StatelessWidget {
             subtitle: "Permanently delete this delivery",
             onTap: () {
               Navigator.pop(context);
-              showSnack(
-                text: "Will be available in next update",
-                backgroundColor: AppColors.red500,
-              );
+              _cancelDelivery(context: context, delivery: delivery);
             },
           ),
         ],
@@ -301,15 +298,39 @@ class DeliveryPage extends StatelessWidget {
             subtitle: "Permanently delete this delivery",
             onTap: () {
               Navigator.pop(context);
-              showSnack(
-                text: "Will be available in next update",
-                backgroundColor: AppColors.red500,
-              );
+              _cancelDelivery(context: context, delivery: delivery);
             },
           ),
         ],
       ),
     );
+  }
+
+  void _cancelDelivery({
+    required BuildContext context,
+    required DeliveryModel delivery,
+  }) async {
+    showSnack(
+      text: "Cancelling Delivery...",
+      backgroundColor: AppColors.blue500,
+      sticky: true,
+    );
+
+    final result = await context.read<DeliveryCubit>().updateDelivery(
+      delivery: delivery.copyWith(deactivate: true),
+    );
+
+    if (result) {
+      showSnack(
+        text: "Delivery Cancelled Successfully",
+        backgroundColor: AppColors.green500,
+      );
+    } else {
+      showSnack(
+        text: "Failed to cancel delivery",
+        backgroundColor: AppColors.red500,
+      );
+    }
   }
 
   void _onMenuTap({
@@ -357,7 +378,11 @@ class DeliveryPage extends StatelessWidget {
                 : "Last added $consumerAgo ago",
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, AppRoutes.addConsumer);
+              Navigator.pushNamed(
+                context,
+                AppRoutes.addConsumer,
+                arguments: {"consumer": null},
+              );
             },
           ),
           bottomSheetTile(

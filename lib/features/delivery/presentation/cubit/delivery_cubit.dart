@@ -105,10 +105,13 @@ class DeliveryCubit extends Cubit<DeliveryState> {
     }
   }
 
-  Future<bool> updateConsumer({required ConsumerModel consumer}) async {
+  Future<bool> updateConsumer({
+    required ConsumerModel consumer,
+    File? image,
+  }) async {
     try {
       emit(state.copyWith(updateConsumerStatus: StateStatus.loading));
-      await _repo.updateConsumer(consumer: consumer);
+      await _repo.updateConsumer(consumer: consumer, image: image);
       emit(state.copyWith(updateConsumerStatus: StateStatus.success));
       return true;
     } catch (e) {

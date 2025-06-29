@@ -129,11 +129,12 @@ class _HomePageState extends State<HomePage> {
               businesses: businesses.map((e) => e.business).toList(),
               myBusiness: myBusiness?.business,
             ),
-            onChatTap: () {
+            onNotificationTap: () {
               showSnack(
                 text: "Will be available in next update",
                 backgroundColor: AppColors.red500,
               );
+              Navigator.pushNamed(context, AppRoutes.notificationPage);
             },
             heading0: !alreadyBusiness ? "" : "Last Delivery",
             heading1: !alreadyBusiness
@@ -150,9 +151,9 @@ class _HomePageState extends State<HomePage> {
                   ).format(recentDelivery.deliveryTD.toDate()),
             title: !alreadyBusiness
                 ? "Add Business"
-                : "${myBusiness?.business.name} Business",
+                : "${myBusiness?.business.name}",
             menuNumber: 0,
-            chatNumber: 0,
+            notificationNumber: 0,
           ),
 
           SliverToBoxAdapter(child: SizedBox(height: 10.h)),
@@ -163,6 +164,8 @@ class _HomePageState extends State<HomePage> {
                 .watch<DeliveryCubit>()
                 .state
                 .deliveries
+                .toList()
+                .where((e) => e.status == "initiated")
                 .toList(),
             numbers: context
                 .watch<DeliveryCubit>()
@@ -478,13 +481,13 @@ class _HomePageState extends State<HomePage> {
     required BuildContext context,
     required void Function() onMenuTap,
     required void Function() onBusinessTap,
-    required void Function() onChatTap,
+    required void Function() onNotificationTap,
     required String heading0,
     required String heading1,
     required String heading2,
     required String title,
     required num menuNumber,
-    required num chatNumber,
+    required num notificationNumber,
   }) {
     return SliverAppBar(
       expandedHeight: 280.h,
@@ -507,18 +510,18 @@ class _HomePageState extends State<HomePage> {
       ),
       actions: [
         IconButton(
-          onPressed: onChatTap,
+          onPressed: onNotificationTap,
           icon: badge.Badge(
-            showBadge: chatNumber != 0,
+            showBadge: notificationNumber != 0,
             badgeStyle: const badge.BadgeStyle(badgeColor: AppColors.blue600),
             badgeContent: Text(
-              "$chatNumber",
+              "$notificationNumber",
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-            child: const Icon(Iconsax.message, color: Colors.white),
+            child: const Icon(Iconsax.notification, color: Colors.white),
           ),
         ),
       ],
