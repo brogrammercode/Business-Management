@@ -30,7 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   Timer? _locationTimer;
 
-  void initializeIsLocationEnabledListener() async {
+  Future<void> initializeIsLocationEnabledListener() async {
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied ||
         permission == LocationPermission.deniedForever) {

@@ -7,8 +7,6 @@ import 'package:gas/core/utils/local_notification.dart';
 import 'package:gas/features/notification/data/models/notification_model.dart';
 import 'package:gas/features/notification/domain/repo/notification_local_repo.dart';
 import 'package:gas/features/notification/domain/repo/notification_remote_repo.dart';
-import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
-import 'package:gas/main.dart';
 
 part 'notification_state.dart';
 
@@ -22,9 +20,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     required NotificationLocalRepo localRepo,
   }) : _repo = repo,
        _localRepo = localRepo,
-       super(const NotificationState()) {
-    initNotificationsStream();
-  }
+       super(const NotificationState());
 
   @override
   Future<void> close() async {
@@ -32,11 +28,9 @@ class NotificationCubit extends Cubit<NotificationState> {
     return super.close();
   }
 
-  Future<void> initNotificationsStream() async {
+  Future<void> initNotificationsStream({required String businessID}) async {
     try {
       emit(state.copyWith(streamNotificationsStatus: StateStatus.loading));
-      final context = navigatorKey.currentContext;
-      final businessID = context?.read<BusinessCubit>().state.businessID ?? '';
 
       _subscription = _repo.streamNotifications(businessID: businessID).listen((
         notifications,

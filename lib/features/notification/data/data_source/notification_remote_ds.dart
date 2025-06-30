@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gas/features/notification/data/models/notification_model.dart';
@@ -17,7 +19,8 @@ class NotificationRemoteDs implements NotificationRemoteRepo {
           .doc(notification.id)
           .set(notification.toJson());
       return true;
-    } catch (_) {
+    } catch (e) {
+      log("ERROR: $e");
       return false;
     }
   }
@@ -50,7 +53,8 @@ class NotificationRemoteDs implements NotificationRemoteRepo {
 
       await batch.commit();
       return true;
-    } catch (_) {
+    } catch (e) {
+      log("ERROR: $e");
       return false;
     }
   }
@@ -64,11 +68,14 @@ class NotificationRemoteDs implements NotificationRemoteRepo {
         .where('businessID', isEqualTo: businessID)
         .orderBy('creationTD', descending: true)
         .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => NotificationModel.fromJson(doc.data()))
-              .toList(),
-        );
+        .map((snapshot) {
+          final models = snapshot.docs.map((doc) {
+            final data = doc.data();
+            return NotificationModel.fromJson(data);
+          }).toList();
+
+          return models;
+        });
   }
 
   @override
@@ -81,7 +88,8 @@ class NotificationRemoteDs implements NotificationRemoteRepo {
           .doc(notification.id)
           .update(notification.toJson());
       return true;
-    } catch (_) {
+    } catch (e) {
+      log("ERROR: $e");
       return false;
     }
   }

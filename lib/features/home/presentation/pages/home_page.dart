@@ -37,17 +37,26 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    LocalNotification.initialize();
-    context.read<HomeCubit>().initializeIsLocationEnabledListener();
-    context.read<BusinessCubit>().initBusinessSubscription();
-    context.read<EmployeeCubit>().initEmployeeSubscription();
-    context.read<NotificationCubit>().initNotificationsStream();
+    _inits();
+  }
+
+  Future<void> _inits() async {
+    await LocalNotification.initialize();
+    await context.read<HomeCubit>().initializeIsLocationEnabledListener();
+    await context.read<BusinessCubit>().initBusinessSubscription();
+    await context.read<EmployeeCubit>().initEmployeeSubscription();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BusinessCubit, BusinessState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.businessID.isNotEmpty) {
+          context.read<NotificationCubit>().initNotificationsStream(
+            businessID: state.businessID,
+          );
+        }
+      },
       builder: (context, state) {
         final uid = FirebaseAuth.instance.currentUser?.uid;
         final businesses = state.businesses;

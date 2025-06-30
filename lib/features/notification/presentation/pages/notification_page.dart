@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:badges/badges.dart' as badge;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class _NotificationPageState extends State<NotificationPage> {
       listener: (context, state) {},
       builder: (context, state) {
         final notifications = state.notifications;
+        log(notifications.length.toString());
         final unseenNotifications = notifications
             .where(
               (notification) => !notification.seen.any(
