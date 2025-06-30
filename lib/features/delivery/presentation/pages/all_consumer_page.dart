@@ -15,7 +15,10 @@ import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
 import 'package:gas/features/delivery/data/models/consumer_model.dart';
 import 'package:gas/features/delivery/data/models/delivery_model.dart';
 import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
+import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
+import 'package:gas/features/notification/data/models/notification_model.dart';
+import 'package:gas/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:intl/intl.dart';
@@ -158,6 +161,26 @@ class _AllConsumerPageState extends State<AllConsumerPage> {
                   creationTD: td,
                   createdBy: FirebaseAuth.instance.currentUser?.uid ?? "",
                   deactivate: false,
+                ),
+              );
+
+              final user = context.read<EmployeeCubit>().state.user.first;
+
+              await context.read<NotificationCubit>().addNotification(
+                notification: NotificationModel(
+                  id: td.millisecondsSinceEpoch.toString(),
+                  businessID: businessID,
+                  bigAvatar: consumer.image,
+                  smallAvatar: user.employee.avatar,
+                  title: "Delivery Initiated",
+                  description:
+                      "Delivery for ${consumer.name} is initiated by ${user.employee.name}",
+                  boldTexts: [consumer.name, user.employee.name],
+                  module: "DELIVERY",
+                  refID: consumer.id,
+                  seen: [],
+                  createdBy: FirebaseAuth.instance.currentUser?.uid ?? "",
+                  creationTD: td,
                 ),
               );
 

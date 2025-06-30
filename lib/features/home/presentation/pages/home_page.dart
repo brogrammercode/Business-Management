@@ -21,6 +21,7 @@ import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
 import 'package:gas/features/employee/data/models/employee_model.dart';
 import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
+import 'package:gas/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:badges/badges.dart' as badge;
 import 'package:intl/intl.dart';
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
     context.read<HomeCubit>().initializeIsLocationEnabledListener();
     context.read<BusinessCubit>().initBusinessSubscription();
     context.read<EmployeeCubit>().initEmployeeSubscription();
+    context.read<NotificationCubit>().initNotificationsStream();
   }
 
   @override
@@ -117,6 +119,16 @@ class _HomePageState extends State<HomePage> {
     bool alreadyBusiness,
     DeliveryModel? recentDelivery,
   ) {
+    final unseenNotifications = context
+        .watch<NotificationCubit>()
+        .state
+        .notifications
+        .where(
+          (notification) => !notification.seen.any(
+            (e) => e.uid == FirebaseAuth.instance.currentUser?.uid,
+          ),
+        )
+        .toList();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -132,17 +144,7 @@ class _HomePageState extends State<HomePage> {
               myBusiness: myBusiness?.business,
             ),
             onNotificationTap: () {
-              showSnack(
-                text: "Will be available in next update",
-                backgroundColor: AppColors.red500,
-              );
-              // Navigator.pushNamed(context, AppRoutes.notificationPage);
-              LocalNotification().defaultNotify(
-                id: 0,
-                title: "title",
-                body: "body",
-                payload: "",
-              );
+              Navigator.pushNamed(context, AppRoutes.notificationPage);
             },
             heading0: !alreadyBusiness ? "" : "Last Delivery",
             heading1: !alreadyBusiness
@@ -161,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                 ? "Add Business"
                 : "${myBusiness?.business.name}",
             menuNumber: 0,
-            notificationNumber: 0,
+            notificationNumber: unseenNotifications.length,
           ),
 
           SliverToBoxAdapter(child: SizedBox(height: 10.h)),

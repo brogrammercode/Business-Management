@@ -13,6 +13,11 @@ import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:gas/features/home/data/data_source/home_remote_ds.dart';
 import 'package:gas/features/home/domain/repo/home_repo.dart';
 import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
+import 'package:gas/features/notification/data/data_source/notification_local_ds.dart';
+import 'package:gas/features/notification/data/data_source/notification_remote_ds.dart';
+import 'package:gas/features/notification/domain/repo/notification_local_repo.dart';
+import 'package:gas/features/notification/domain/repo/notification_remote_repo.dart';
+import 'package:gas/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 class Injections {
@@ -40,6 +45,15 @@ class Injections {
     // delivery
     _getIt.registerFactory<DeliveryRepo>(() => DeliveryRemoteDs());
     _getIt.registerFactory<DeliveryCubit>(() => DeliveryCubit(repo: _getIt()));
+  
+    // notification
+    _getIt.registerFactory<NotificationLocalRepo>(() => NotificationLocalDs());
+    _getIt.registerFactory<NotificationRemoteRepo>(
+      () => NotificationRemoteDs(),
+    );
+    _getIt.registerFactory<NotificationCubit>(
+      () => NotificationCubit(repo: _getIt(), localRepo: _getIt()),
+    );
   }
 
   static T get<T extends Object>() {

@@ -18,6 +18,7 @@ class LocalNotification {
         priority: Priority.high,
         styleInformation: DefaultStyleInformation(true, true),
         fullScreenIntent: true,
+        category: AndroidNotificationCategory.social
       );
   static const NotificationDetails _defaultND = NotificationDetails(
     android: _defaultAndroidND,

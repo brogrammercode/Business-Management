@@ -11,6 +11,7 @@ import 'package:gas/core/config/api/firebase_options.dart';
 import 'package:gas/features/delivery/presentation/cubit/delivery_cubit.dart';
 import 'package:gas/features/employee/presentation/cubit/employee_cubit.dart';
 import 'package:gas/features/home/presentation/cubit/home_cubit.dart';
+import 'package:gas/features/notification/presentation/cubit/notification_cubit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
             create: (_) => Injections.get<EmployeeCubit>()),
         BlocProvider<DeliveryCubit>(
             create: (_) => Injections.get<DeliveryCubit>()),
+        BlocProvider<NotificationCubit>(
+          create: (_) => Injections.get<NotificationCubit>(),
+        ),
       ],
       child: ScreenUtilInit(
         designSize: const Size(411.42857142857144, 843.4285714285714),

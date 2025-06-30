@@ -7,6 +7,7 @@ class NotificationModel extends Notification {
     required super.businessID,
     required super.bigAvatar,
     required super.smallAvatar,
+    required super.title,
     required super.description,
     required super.boldTexts,
     required super.module,
@@ -26,6 +27,7 @@ class NotificationModel extends Notification {
       businessID: json['businessID']?.toString() ?? '',
       bigAvatar: json['bigAvatar']?.toString() ?? '',
       smallAvatar: json['smallAvatar']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
       boldTexts:
           (json['boldTexts'] as List?)?.map((e) => e.toString()).toList() ?? [],
@@ -49,6 +51,7 @@ class NotificationModel extends Notification {
       'businessID': businessID,
       'bigAvatar': bigAvatar,
       'smallAvatar': smallAvatar,
+      'title': title,
       'description': description,
       'boldTexts': boldTexts,
       'module': module,
@@ -64,6 +67,7 @@ class NotificationModel extends Notification {
     String? businessID,
     String? bigAvatar,
     String? smallAvatar,
+    String? title,
     String? description,
     List<String>? boldTexts,
     String? module,
@@ -77,6 +81,7 @@ class NotificationModel extends Notification {
       businessID: businessID ?? this.businessID,
       bigAvatar: bigAvatar ?? this.bigAvatar,
       smallAvatar: smallAvatar ?? this.smallAvatar,
+      title: title ?? this.title,
       description: description ?? this.description,
       boldTexts: boldTexts ?? this.boldTexts,
       module: module ?? this.module,
@@ -89,7 +94,7 @@ class NotificationModel extends Notification {
 
   @override
   String toString() {
-    return 'NotificationModel(id: $id, businessID: $businessID, bigAvatar: $bigAvatar, smallAvatar: $smallAvatar, description: $description, boldTexts: $boldTexts, module: $module, refID: $refID, seen: $seen, createdBy: $createdBy, creationTD: $creationTD)';
+    return 'NotificationModel(id: $id, businessID: $businessID, bigAvatar: $bigAvatar, smallAvatar: $smallAvatar, title: $title, description: $description, boldTexts: $boldTexts, module: $module, refID: $refID, seen: $seen, createdBy: $createdBy, creationTD: $creationTD)';
   }
 }
 

@@ -3,10 +3,14 @@
 import 'package:badges/badges.dart' as badge;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gas/core/config/routes/routes.dart';
 import 'package:gas/core/config/theme/colors.dart';
 import 'package:gas/core/utils/common.dart';
+import 'package:gas/features/business/presentation/cubit/business_cubit.dart';
+import 'package:gas/features/notification/data/models/notification_model.dart';
+import 'package:gas/features/notification/presentation/cubit/notification_cubit.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
@@ -20,110 +24,110 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
-    List notifications = [
-      {
-        "id": "0",
-        "bigAvatar":
-            "https://images.unsplash.com/photo-1529946179074-87642f6204d7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGFkeXxlbnwwfHwwfHx8MA%3D%3D",
-        "smallAvatar":
-            "https://images.unsplash.com/photo-1508341591423-4347099e1f19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWFufGVufDB8fDB8fHww",
-        "description": "Nirma Devi got the Delivery from Saroj Kumar",
-        "boldTexts": ["Nirma Devi", "Saroj Kumar"],
-        "module": "DELIVERY",
-        'refID': "",
-        "seen": [
-          {"uid": FirebaseAuth.instance.currentUser?.uid, "td": DateTime.now()},
-        ],
-        "businessID": "",
-        "notificationTD": DateTime.now(),
-      },
-      {
-        "id": "1",
-        "bigAvatar":
-            "https://images.unsplash.com/photo-1529946179074-87642f6204d7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGFkeXxlbnwwfHwwfHx8MA%3D%3D",
-        "smallAvatar": "",
-        "description": "Nirma Devi joined Gas Agency",
-        "boldTexts": ["Nirma Devi", "Gas Agency"],
-        "module": "BUSINESS",
-        'refID': "",
-        "seen": [],
-        "businessID": "",
-        "notificationTD": DateTime.now(),
-      },
-      {
-        "id": "1",
-        "bigAvatar":
-            "https://images.unsplash.com/photo-1529946179074-87642f6204d7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bGFkeXxlbnwwfHwwfHx8MA%3D%3D",
-        "smallAvatar": "",
-        "description": "Delivery initiated for Nirma Devi",
-        "boldTexts": ["Nirma Devi"],
-        "module": "DELIVERY",
-        'refID': "",
-        "seen": [
-          {"uid": FirebaseAuth.instance.currentUser?.uid, "td": DateTime.now()},
-        ],
-        "businessID": "",
-        "notificationTD": DateTime.now(),
-      },
-      {
-        "id": "1",
-        "bigAvatar":
-            "https://images.unsplash.com/photo-1508341591423-4347099e1f19?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWFufGVufDB8fDB8fHww",
-        "smallAvatar": "",
-        "description": "Delivery initiated for Saroj Kumar",
-        "boldTexts": ["Saroj Kumar"],
-        "module": "DELIVERY",
-        'refID': "",
-        "seen": [],
-        "businessID": "",
-        "notificationTD": DateTime.now(),
-      },
-    ];
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverAppBar(
-            context: context,
-            onBackTap: () => Navigator.pop(context),
-            onMenuTap: () =>
-                _onMenuTap(totalUnreadNotification: 0, totalNotification: 10),
-            title: "Notification",
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                children: List.generate(notifications.length, (i) {
-                  final notification = notifications[i];
-                  return _deliveryTile(
-                    context: context,
-                    bigAvatar: notification['bigAvatar'],
-                    smallAvatar: notification['smallAvatar'],
-                    description: notification['description'],
-                    boldTexts: notification['boldTexts'],
-                    tdText: DateFormat(
-                      "dd MMM, hh:mm a",
-                    ).format(notification['notificationTD']),
-                    seen:
-                        List<Map<String, dynamic>>.from(
-                          notification['seen'] ?? [],
-                        ).any(
-                          (e) =>
-                              e['uid'] ==
-                              FirebaseAuth.instance.currentUser?.uid,
-                        ),
-                    onTap: () {
-                      if (notification['module'] == "DELIVERY") {
-                        Navigator.pushNamed(context, AppRoutes.delivery);
-                      }
-                    },
-                  );
-                }),
+    return BlocConsumer<NotificationCubit, NotificationState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        final notifications = state.notifications;
+        final unseenNotifications = notifications
+            .where(
+              (notification) => !notification.seen.any(
+                (e) => e.uid == FirebaseAuth.instance.currentUser?.uid,
               ),
-            ),
+            )
+            .toList();
+        final businessID = context.watch<BusinessCubit>().state.businessID;
+        if (unseenNotifications.isNotEmpty) {
+          context.read<NotificationCubit>().readAllNotification(
+            businessID: businessID,
+          );
+        }
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              _buildSliverAppBar(
+                context: context,
+                onBackTap: () => Navigator.pop(context),
+                onMenuTap: () => _onMenuTap(
+                  totalUnreadNotification: unseenNotifications.length,
+                  totalNotification: notifications.length,
+                ),
+                title: "Notification",
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: _groupedNotifications(notifications),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
+    );
+  }
+
+  Widget _groupedNotifications(List<NotificationModel> notifications) {
+    final Map<String, List<NotificationModel>> grouped = {};
+
+    for (final notification in notifications) {
+      final date = notification.creationTD.toDate();
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = today.subtract(const Duration(days: 1));
+      final creationDate = DateTime(date.year, date.month, date.day);
+
+      String label;
+      if (creationDate == today) {
+        label = "Today";
+      } else if (creationDate == yesterday) {
+        label = "Yesterday";
+      } else {
+        label = DateFormat("dd MMM yyyy").format(date);
+      }
+
+      grouped.putIfAbsent(label, () => []).add(notification);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: grouped.entries.map((entry) {
+        final title = entry.key;
+        final list = entry.value;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 16.h),
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+            ),
+            ...list.map((notification) {
+              final seen = notification.seen.any(
+                (e) => e.uid == FirebaseAuth.instance.currentUser?.uid,
+              );
+
+              return _deliveryTile(
+                context: context,
+                bigAvatar: notification.bigAvatar,
+                smallAvatar: notification.smallAvatar,
+                description: notification.description,
+                boldTexts: notification.boldTexts,
+                tdText: DateFormat(
+                  "dd MMM, hh:mm a",
+                ).format(notification.creationTD.toDate()),
+                seen: seen,
+                onTap: () {
+                  if (notification.module == "DELIVERY") {
+                    Navigator.pushNamed(context, AppRoutes.delivery);
+                  }
+                },
+              );
+            }),
+          ],
+        );
+      }).toList(),
     );
   }
 

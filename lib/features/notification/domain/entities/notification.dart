@@ -7,6 +7,7 @@ class Notification extends Equatable {
   final String businessID;
   final String bigAvatar;
   final String smallAvatar;
+  final String title;
   final String description;
   final List<String> boldTexts;
   final String module;
@@ -20,6 +21,7 @@ class Notification extends Equatable {
     required this.businessID,
     required this.bigAvatar,
     required this.smallAvatar,
+    required this.title,
     required this.description,
     required this.boldTexts,
     required this.module,
@@ -34,6 +36,7 @@ class Notification extends Equatable {
     businessID,
     bigAvatar,
     smallAvatar,
+    title,
     description,
     boldTexts,
     module,

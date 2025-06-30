@@ -7,5 +7,4 @@ abstract interface class NotificationRemoteRepo {
   Future<bool> addNotification({required NotificationModel notification});
   Future<bool> updateNotification({required NotificationModel notification});
   Future<bool> readAllNotification({required String businessID});
-  Future<bool> notifyInPhone({required NotificationModel notification});
 }
